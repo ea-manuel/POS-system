@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RetailHub - Admin Portal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: #f5f7fa;
+        color: #2b2b2f;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 260px;
+        height: 100vh;
+        background: white;
+        border-right: 1px solid #e8e8e8;
+        padding: 25px 20px;
+        overflow-y: auto;
+        z-index: 100;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      .sidebar-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #2f2ee9 0%, #1a1ac0 100%);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      .sidebar-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2b2b2f;
+      }
+
+      .sidebar-subtitle {
+        font-size: 11px;
+        color: #888;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        margin-top: 20px;
+        padding-left: 12px;
+        font-weight: 600;
+      }
+
+      .sidebar-menu {
+        list-style: none;
+      }
+
+      .sidebar-menu li {
+        margin-bottom: 8px;
+      }
+
+      .sidebar-menu a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        color: #666;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.2s;
+        font-size: 14px;
+      }
+
+      .sidebar-menu a:hover {
+        background: #f0f4ff;
+        color: #2f2ee9;
+      }
+
+      .sidebar-menu a.active {
+        background: #f0f4ff;
+        color: #2f2ee9;
+        font-weight: 600;
+      }
+
+      .sidebar-icon-item {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      }
+
+      .logout-btn {
+        width: 100%;
+        margin-top: 30px;
+        padding: 11px 12px;
+        background: #fee;
+        border: 1px solid #ffb3b3;
+        color: #c00;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+
+      .logout-btn:hover {
+        background: #fdd;
+      }
+
+      .main-content {
+        margin-left: 260px;
+        padding: 25px;
+        min-height: 100vh;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .admin-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .date-time {
+        text-align: right;
+        font-size: 12px;
+        color: #888;
+      }
+
+      .date-time div:first-child {
+        font-weight: 600;
+        color: #2b2b2f;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        border: 1px solid #e8e8e8;
+        transition: all 0.2s;
+      }
+
+      .stat-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-color: #d0d0d0;
+      }
+
+      .stat-label {
+        font-size: 13px;
+        color: #888;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #2b2b2f;
+        margin-bottom: 8px;
+      }
+
+      .stat-change {
+        font-size: 12px;
+        color: #4caf50;
+      }
+
+      .stat-change.negative {
+        color: #f44336;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      @media (max-width: 1200px) {
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .section-card {
+        background: white;
+        border-radius: 10px;
+        border: 1px solid #e8e8e8;
+        overflow: hidden;
+      }
+
+      .section-header {
+        padding: 20px 25px;
+        border-bottom: 1px solid #e8e8e8;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .section-header h2 {
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .section-body {
+        padding: 20px 25px;
+      }
+
+      .transaction-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .transaction-item:last-child {
+        border-bottom: none;
+      }
+
+      .transaction-info {
+        flex: 1;
+      }
+
+      .transaction-user {
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+
+      .transaction-time {
+        font-size: 12px;
+        color: #888;
+      }
+
+      .transaction-amount {
+        font-weight: 700;
+        font-size: 14px;
+        color: #2f2ee9;
+      }
+
+      .transaction-status {
+        display: inline-block;
+        margin-left: 10px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .transaction-status.completed {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+
+      .transaction-status.pending {
+        background: #fff3e0;
+        color: #f57c00;
+      }
+
+      .employee-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .employee-item:last-child {
+        border-bottom: none;
+      }
+
+      .employee-info {
+        flex: 1;
+      }
+
+      .employee-name {
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 4px;
+      }
+
+      .employee-role {
+        font-size: 12px;
+        color: #888;
+      }
+
+      .employee-sales {
+        text-align: right;
+      }
+
+      .employee-sales-value {
+        font-weight: 700;
+        font-size: 14px;
+        color: #2f2ee9;
+      }
+
+      .employee-sales-count {
+        font-size: 12px;
+        color: #888;
+      }
+
+      .view-all {
+        color: #2f2ee9;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: color 0.2s;
+      }
+
+      .view-all:hover {
+        color: #1a1ac0;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          width: 200px;
+          padding: 20px 15px;
+        }
+
+        .main-content {
+          margin-left: 200px;
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 22px;
+        }
+
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .sidebar {
+          display: none;
+        }
+
+        .main-content {
+          margin-left: 0;
+        }
+      }
+
+      /* Inventory table */
+      .inventory-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .inventory-table th,
+      .inventory-table td {
+        border: 1px solid #e2e2e2;
+        padding: 10px 12px;
+        text-align: left;
+      }
+
+      .inventory-table th {
+        background: #f1f5fd;
+        color: #333;
+        font-weight: 700;
+      }
+
+      .inventory-table tr:nth-child(even) {
+        background: #fbfbfb;
+      }
+
+      .inventory-table .qty-low {
+        color: #e55353;
+        font-weight: 700;
+      }
+
+      .inventory-table .qty-ok {
+        color: #2f2ee9;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const supabaseUrl = "https://czrfdcarnyesbfgnlums.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6cmZkY2Fybnllc2JmZ25sdW1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDY2ODAsImV4cCI6MjA4ODkyMjY4MH0.trHM_a4BJk3kpid_oi7Exz8T3U7I13mXtRwnLaG3nkY";
+      const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+      async function ensureAdmin() {
+        const {
+          data: { user },
+          error,
+        } = await client.auth.getUser();
+        const role = user?.user_metadata?.role;
+
+        if (error || !user || role !== "admin") {
+          window.location.href = "index.html";
+        }
+      }
+
+      ensureAdmin();
+    </script>
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-icon">🛒</div>
+        <div class="sidebar-title">Admin</div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <div class="sidebar-subtitle">Main</div>
+        <li>
+          <a href="#" class="active" onclick="switchTab('dashboard')"
+            ><span class="sidebar-icon-item">📊</span>Dashboard</a
+          >
+        </li>
+        <li>
+          <a href="#" onclick="switchTab('transactions')"
+            ><span class="sidebar-icon-item">💳</span>Transactions</a
+          >
+        </li>
+
+        <div class="sidebar-subtitle">Management</div>
+        <li>
+          <a href="#" onclick="switchTab('employees')"
+            ><span class="sidebar-icon-item">👥</span>Employees</a
+          >
+        </li>
+        <li>
+          <a href="#" onclick="switchTab('inventory')"
+            ><span class="sidebar-icon-item">📦</span>Inventory</a
+          >
+        </li>
+        <li>
+          <a href="#" onclick="switchTab('reports')"
+            ><span class="sidebar-icon-item">📈</span>Reports</a
+          >
+        </li>
+
+        <div class="sidebar-subtitle">Settings</div>
+        <li>
+          <a href="#" onclick="switchTab('settings')"
+            ><span class="sidebar-icon-item">⚙️</span>System Settings</a
+          >
+        </li>
+      </ul>
+
+      <button class="logout-btn" onclick="logout()">← Logout</button>
+    </div>
+
+    <div class="main-content">
+      <div class="header">
+        <div>
+          <h1 id="pageTitle">Dashboard</h1>
+        </div>
+        <div class="admin-info">
+          <div class="date-time">
+            <div id="currentDate">March 12, 2026</div>
+            <div id="currentTime">10:30 AM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dashboard Tab -->
+      <div id="dashboard-tab" class="tab-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Today's Sales</div>
+            <div class="stat-value">$2,450.00</div>
+            <div class="stat-change">↑ 12% from yesterday</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Transactions</div>
+            <div class="stat-value">142</div>
+            <div class="stat-change">↑ 8 more than yesterday</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Employees</div>
+            <div class="stat-value">8</div>
+            <div class="stat-change">All present today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Transaction</div>
+            <div class="stat-value">$17.25</div>
+            <div class="stat-change">↓ 2% from yesterday</div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Recent Transactions</h2>
+            </div>
+            <div class="section-body">
+              <div class="transaction-item">
+                <div class="transaction-info">
+                  <div class="transaction-user">John Smith</div>
+                  <div class="transaction-time">10:45 AM - Order #4521</div>
+                </div>
+                <div style="text-align: right">
+                  <div class="transaction-amount">$45.99</div>
+                  <span class="transaction-status completed">Completed</span>
+                </div>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-info">
+                  <div class="transaction-user">Sarah Johnson</div>
+                  <div class="transaction-time">10:30 AM - Order #4520</div>
+                </div>
+                <div style="text-align: right">
+                  <div class="transaction-amount">$32.50</div>
+                  <span class="transaction-status completed">Completed</span>
+                </div>
+              </div>
+              <div class="transaction-item">
+                <div class="transaction-info">
+                  <div class="transaction-user">Mike Chen</div>
+                  <div class="transaction-time">10:15 AM - Order #4519</div>
+                </div>
+                <div style="text-align: right">
+                  <div class="transaction-amount">$67.25</div>
+                  <span class="transaction-status completed">Completed</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Top Performers</h2>
+            </div>
+            <div class="section-body">
+              <div class="employee-item">
+                <div class="employee-info">
+                  <div class="employee-name">Sarah Johnson</div>
+                  <div class="employee-role">Cashier - Station 2</div>
+                </div>
+                <div class="employee-sales">
+                  <div class="employee-sales-value">$1,245.50</div>
+                  <div class="employee-sales-count">38 sales today</div>
+                </div>
+              </div>
+              <div class="employee-item">
+                <div class="employee-info">
+                  <div class="employee-name">John Smith</div>
+                  <div class="employee-role">Cashier - Station 1</div>
+                </div>
+                <div class="employee-sales">
+                  <div class="employee-sales-value">$892.75</div>
+                  <div class="employee-sales-count">32 sales today</div>
+                </div>
+              </div>
+              <div class="employee-item">
+                <div class="employee-info">
+                  <div class="employee-name">Mike Chen</div>
+                  <div class="employee-role">Cashier - Station 3</div>
+                </div>
+                <div class="employee-sales">
+                  <div class="employee-sales-value">$758.25</div>
+                  <div class="employee-sales-count">28 sales today</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions Tab -->
+      <div id="transactions-tab" class="tab-content" style="display: none">
+        <div class="section-card">
+          <div class="section-header">
+            <h2>All Transactions</h2>
+          </div>
+          <div class="section-body">
+            <p
+              style="
+                color: #888;
+                font-size: 14px;
+                text-align: center;
+                padding: 40px 0;
+              "
+            >
+              Complete transaction history and detailed reports coming soon.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Employees Tab -->
+      <div id="employees-tab" class="tab-content" style="display: none">
+        <div class="section-card">
+          <div class="section-header">
+            <h2>Employee Management</h2>
+          </div>
+          <div class="section-body">
+            <p
+              style="
+                color: #888;
+                font-size: 14px;
+                text-align: center;
+                padding: 40px 0;
+              "
+            >
+              Employee management and scheduling features coming soon.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory Tab -->
+      <div id="inventory-tab" class="tab-content" style="display: none">
+        <div class="section-card">
+          <div class="section-header">
+            <h2>Inventory Management</h2>
+            <button
+              id="addItemBtn"
+              style="
+                margin-bottom: 20px;
+                padding: 10px 15px;
+                background: #2f2ee9;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+              "
+            >
+              Add New Item
+            </button>
+          </div>
+          <div class="section-body">
+            <div
+              id="addItemForm"
+              style="
+                display: none;
+                margin-top: 20px;
+                padding: 20px;
+                border: 1px solid #e8e8e8;
+                border-radius: 10px;
+                background: white;
+              "
+            >
+              <h3>Add New Item</h3>
+              <label>Barcode: <span id="scannedBarcode"></span></label
+              ><br /><br />
+              <label>Name: <input type="text" id="itemName" required /></label
+              ><br /><br />
+              <label
+                >Stock Quantity:
+                <input type="number" id="itemStock" required /></label
+              ><br /><br />
+              <label
+                >Price:
+                <input
+                  type="number"
+                  step="0.01"
+                  id="itemPrice"
+                  required /></label
+              ><br /><br />
+              <label
+                >Category:
+                <input
+                  type="text"
+                  id="itemCategory"
+                  list="categoryList" /></label
+              ><br /><br />
+              <datalist id="categoryList"></datalist>
+              <button
+                id="saveItemBtn"
+                style="
+                  padding: 10px 15px;
+                  background: #4caf50;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                "
+              >
+                Save Item
+              </button>
+              <button
+                id="cancelAddBtn"
+                style="
+                  padding: 10px 15px;
+                  background: #f44336;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  margin-left: 10px;
+                "
+              >
+                Cancel
+              </button>
+            </div>
+            <input type="text" id="barcodeInput" style="display: none" />
+            <div id="inventoryContainer">
+              <p
+                style="
+                  color: #888;
+                  font-size: 14px;
+                  text-align: center;
+                  padding: 40px 0;
+                "
+              >
+                Loading inventory...
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reports Tab -->
+      <div id="reports-tab" class="tab-content" style="display: none">
+        <div class="section-card">
+          <div class="section-header">
+            <h2>Sales Reports</h2>
+          </div>
+          <div class="section-body">
+            <p
+              style="
+                color: #888;
+                font-size: 14px;
+                text-align: center;
+                padding: 40px 0;
+              "
+            >
+              Detailed sales analytics and reports coming soon.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div id="settings-tab" class="tab-content" style="display: none">
+        <div class="section-card">
+          <div class="section-header">
+            <h2>System Settings</h2>
+          </div>
+          <div class="section-body">
+            <p
+              style="
+                color: #888;
+                font-size: 14px;
+                text-align: center;
+                padding: 40px 0;
+              "
+            >
+              System configuration and settings coming soon.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let isAddingItem = false;
+      let focusInterval;
+      let scannedBarcode = "";
+
+      function switchTab(tabName) {
+        // Hide all tabs
+        const tabs = document.querySelectorAll(".tab-content");
+        tabs.forEach((tab) => (tab.style.display = "none"));
+
+        // Show selected tab
+        document.getElementById(tabName + "-tab").style.display = "block";
+
+        // Update page title
+        const titles = {
+          dashboard: "Dashboard",
+          transactions: "Transactions",
+          employees: "Employee Management",
+          inventory: "Inventory",
+          reports: "Sales Reports",
+          settings: "System Settings",
+        };
+        document.getElementById("pageTitle").textContent =
+          titles[tabName] || "Dashboard";
+
+        // Load inventory when switching to that tab
+        if (tabName === "inventory") {
+          loadInventory();
+        }
+
+        // Update active menu item
+        document.querySelectorAll(".sidebar-menu a").forEach((link) => {
+          link.classList.remove("active");
+        });
+        event.target.closest("a").classList.add("active");
+      }
+
+      function logout() {
+        if (confirm("Are you sure you want to logout?")) {
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("employeeId");
+          window.location.href = "index.html";
+        }
+      }
+
+      // Update date and time
+      function updateDateTime() {
+        const now = new Date();
+        const dateOptions = { year: "numeric", month: "long", day: "numeric" };
+        const timeOptions = {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        };
+
+        document.getElementById("currentDate").textContent =
+          now.toLocaleDateString("en-US", dateOptions);
+        document.getElementById("currentTime").textContent =
+          now.toLocaleTimeString("en-US", timeOptions);
+      }
+
+      updateDateTime();
+      setInterval(updateDateTime, 60000); // Update every minute
+
+      // Add item functionality
+      document.getElementById("addItemBtn").addEventListener("click", () => {
+        isAddingItem = true;
+        document.getElementById("addItemForm").style.display = "none";
+        document.getElementById("barcodeInput").style.display = "block";
+        document.getElementById("barcodeInput").value = "";
+        document.getElementById("barcodeInput").focus();
+        focusInterval = setInterval(() => {
+          document.getElementById("barcodeInput").focus();
+        }, 100);
+      });
+
+      document
+        .getElementById("barcodeInput")
+        .addEventListener("keypress", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            scannedBarcode = e.target.value.trim();
+            if (scannedBarcode) {
+              clearInterval(focusInterval);
+              document.getElementById("barcodeInput").style.display = "none";
+              document.getElementById("scannedBarcode").textContent =
+                scannedBarcode;
+              document.getElementById("addItemForm").style.display = "block";
+              document.getElementById("itemName").focus();
+              isAddingItem = false;
+            }
+          }
+        });
+
+      document
+        .getElementById("saveItemBtn")
+        .addEventListener("click", async () => {
+          const name = document.getElementById("itemName").value.trim();
+          const stock = parseInt(document.getElementById("itemStock").value);
+          const price = parseFloat(document.getElementById("itemPrice").value);
+          const category = document.getElementById("itemCategory").value.trim();
+
+          if (!name || isNaN(stock) || isNaN(price)) {
+            alert("Please fill in all required fields correctly.");
+            return;
+          }
+
+          const { error } = await client.from("Products").insert({
+            name,
+            barcode: scannedBarcode,
+            stock_quantity: stock,
+            price,
+            category: category || null,
+          });
+
+          if (error) {
+            alert("Error adding item: " + error.message);
+            console.error(error);
+          } else {
+            alert("Item added successfully!");
+            // Clear form
+            document.getElementById("itemName").value = "";
+            document.getElementById("itemStock").value = "";
+            document.getElementById("itemPrice").value = "";
+            document.getElementById("itemCategory").value = "";
+            document.getElementById("addItemForm").style.display = "none";
+            loadInventory();
+          }
+        });
+
+      document.getElementById("cancelAddBtn").addEventListener("click", () => {
+        document.getElementById("addItemForm").style.display = "none";
+        document.getElementById("itemName").value = "";
+        document.getElementById("itemStock").value = "";
+        document.getElementById("itemPrice").value = "";
+        document.getElementById("itemCategory").value = "";
+        scannedBarcode = "";
+      });
+
+      // Inventory loader
+      async function loadInventory() {
+        const container = document.getElementById("inventoryContainer");
+        container.innerHTML = `<p style="color: #888; font-size: 14px; text-align: center; padding: 40px 0;">Loading inventory...</p>`;
+
+        const { data: products, error } = await client
+          .from("Products")
+          .select("*")
+          .order("name", { ascending: true });
+
+        if (error) {
+          container.innerHTML = `<p style="color: #c00; font-size: 14px; text-align: center; padding: 40px 0;">Error loading inventory.</p>`;
+          console.error("Inventory load error:", error);
+          return;
+        }
+
+        if (!products || products.length === 0) {
+          container.innerHTML = `<p style="color: #888; font-size: 14px; text-align: center; padding: 40px 0;">No products found.</p>`;
+          return;
+        }
+
+        // Populate category datalist
+        const categories = [
+          ...new Set(products.map((p) => p.category).filter((c) => c)),
+        ];
+        const datalist = document.getElementById("categoryList");
+        datalist.innerHTML = categories
+          .map((c) => `<option value="${c}">`)
+          .join("");
+
+        container.innerHTML = renderInventoryTable(products);
+      }
+
+      function renderInventoryTable(items) {
+        return `
+          <table class="inventory-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Barcode</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Category</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items
+                .map(
+                  (item) => `
+                    <tr>
+                      <td>${item.id}</td>
+                      <td>${item.name}</td>
+                      <td>${item.barcode || "-"}</td>
+                      <td>$${parseFloat(item.price || 0).toFixed(2)}</td>
+                      <td class="${
+                        item.stock_quantity <= 5 ? "qty-low" : "qty-ok"
+                      }">${item.stock_quantity ?? 0}</td>
+                      <td>${item.category || "-"}</td>
+                    </tr>
+                  `,
+                )
+                .join("")}
+            </tbody>
+          </table>
+        `;
+      }
+    </script>
+  </body>
+</html>

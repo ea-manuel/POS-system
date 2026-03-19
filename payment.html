@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payment - POS System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f0f7ee 0%, #e8f4f2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .payment-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        padding: 40px;
+      }
+
+      .payment-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .payment-header h1 {
+        font-size: 28px;
+        color: #2b2b2f;
+        margin-bottom: 8px;
+      }
+
+      .payment-header p {
+        color: #829298;
+        font-size: 14px;
+      }
+
+      .amount-display {
+        text-align: center;
+        background: #f9f9f9;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        border: 2px solid #e8e8e8;
+      }
+
+      .amount-display .label {
+        color: #829298;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+      }
+
+      .amount-display .amount {
+        font-size: 42px;
+        font-weight: 700;
+        color: #2f2ee9;
+      }
+
+      .section {
+        display: none;
+      }
+
+      .section.active {
+        display: block;
+      }
+
+      /* Cash Payment Section */
+      .network-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .network-card {
+        background: #f9f9f9;
+        border: 2px solid #e8e8e8;
+        border-radius: 12px;
+        padding: 15px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+      }
+
+      .network-card:hover {
+        border-color: #2f2ee9;
+        background: #f0f4ff;
+      }
+
+      .network-card.selected {
+        border-color: #2f2ee9;
+        background: #f0f4ff;
+        box-shadow: 0 4px 12px rgba(47, 46, 233, 0.15);
+      }
+
+      .network-card img {
+        height: 50px;
+        margin-bottom: 10px;
+        object-fit: contain;
+      }
+
+      .network-card label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #2b2b2f;
+        cursor: pointer;
+        display: block;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #2b2b2f;
+        margin-bottom: 8px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e8e8e8;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #2f2ee9;
+        box-shadow: 0 0 0 3px rgba(47, 46, 233, 0.1);
+      }
+
+      /* Card Payment Section */
+      .card-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      .card-option-btn {
+        background: #f9f9f9;
+        border: 2px solid #e8e8e8;
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+        text-decoration: none;
+        color: #2b2b2f;
+      }
+
+      .card-option-btn:hover {
+        border-color: #2f2ee9;
+        background: #f0f4ff;
+      }
+
+      .card-option-btn svg {
+        height: 40px;
+        margin-bottom: 10px;
+      }
+
+      .card-option-btn .label {
+        font-size: 14px;
+        font-weight: 600;
+        display: block;
+      }
+
+      .card-form {
+        display: none;
+      }
+
+      .card-form.active {
+        display: block;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      /* Buttons */
+      .button-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #2f2ee9 0%, #1a1ac0 100%);
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(47, 46, 233, 0.3);
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-secondary {
+        background: #e8e8e8;
+        color: #2b2b2f;
+      }
+
+      .btn-secondary:hover {
+        background: #d8d8d8;
+      }
+
+      .error-message {
+        background: #ffe8e8;
+        border: 1px solid #ff6b6b;
+        color: #cc0000;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 13px;
+        display: none;
+      }
+
+      .error-message.show {
+        display: block;
+      }
+
+      .back-btn {
+        color: #2f2ee9;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding: 0;
+      }
+
+      .back-btn:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 480px) {
+        .payment-container {
+          padding: 25px 20px;
+        }
+
+        .network-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .card-options {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="payment-container">
+      <button class="back-btn" onclick="goBack()">← Back to Checkout</button>
+
+      <div class="payment-header">
+        <h1 id="headerTitle">Payment</h1>
+        <p id="headerSubtitle">Complete your payment</p>
+      </div>
+
+      <div class="amount-display">
+        <div class="label">Order Total</div>
+        <div class="amount" id="totalAmount">$0.00</div>
+      </div>
+
+      <!-- Cash Payment Section -->
+      <div id="cashSection" class="section">
+        <h2 style="font-size: 18px; margin-bottom: 20px; color: #2b2b2f">
+          Select Mobile Network
+        </h2>
+        <div class="network-grid">
+          <div class="network-card" onclick="selectNetwork(this, 'mtn')">
+            <img
+              src="mtn.svg"
+              alt="MTN"
+              style="height: 50px; margin-bottom: 10px; object-fit: contain"
+            />
+            <label>MTN</label>
+          </div>
+          <div class="network-card" onclick="selectNetwork(this, 'telecel')">
+            <img
+              src="telecel.png"
+              alt="Telecel"
+              style="height: 50px; margin-bottom: 10px; object-fit: contain"
+            />
+            <label>Telecel</label>
+          </div>
+          <div class="network-card" onclick="selectNetwork(this, 'at')">
+            <img
+              src="at.png"
+              alt="AT"
+              style="height: 50px; margin-bottom: 10px; object-fit: contain"
+            />
+            <label>AT</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <input
+            type="tel"
+            id="mobileNumber"
+            placeholder="Enter your 10-digit mobile number"
+            maxlength="10"
+          />
+        </div>
+
+        <div class="error-message" id="cashError"></div>
+
+        <div class="button-group">
+          <button class="btn btn-primary" onclick="processCashPayment()">
+            Proceed to Authorization
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Payment Section -->
+      <div id="cardSection" class="section">
+        <h2 style="font-size: 18px; margin-bottom: 20px; color: #2b2b2f">
+          Payment Method
+        </h2>
+        <div class="card-options">
+          <button class="card-option-btn" onclick="showCardInput('manual')">
+            <svg
+              fill="none"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke="#2f2ee9"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M3 6h18M3 6v12c0 .6.4 1 1 1h16c.6 0 1-.4 1-1V6M6 10h12M6 14h8"
+              />
+            </svg>
+            <span class="label">Manual Entry</span>
+          </button>
+          <button class="card-option-btn" onclick="showCardInput('scanner')">
+            <svg
+              fill="none"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke="#2f2ee9"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z"
+              />
+            </svg>
+            <span class="label">Card Scanner</span>
+          </button>
+        </div>
+
+        <!-- Manual Card Entry -->
+        <div id="manualCardForm" class="card-form">
+          <div class="form-group">
+            <label>Card Number</label>
+            <input
+              type="text"
+              id="cardNumber"
+              placeholder="1234 5678 9012 3456"
+              maxlength="19"
+              oninput="formatCardNumber(this)"
+            />
+          </div>
+
+          <div class="card-grid">
+            <div class="form-group">
+              <label>Expiry Date</label>
+              <input
+                type="text"
+                id="expiryDate"
+                placeholder="MM/YY"
+                maxlength="5"
+                oninput="formatExpiry(this)"
+              />
+            </div>
+            <div class="form-group">
+              <label>CVV</label>
+              <input
+                type="text"
+                id="cvv"
+                placeholder="123"
+                maxlength="3"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Cardholder Name</label>
+            <input
+              type="text"
+              id="cardholderName"
+              placeholder="Full name on card"
+            />
+          </div>
+
+          <div class="error-message" id="cardError"></div>
+
+          <div class="button-group">
+            <button class="btn btn-primary" onclick="processCardPayment()">
+              Proceed to Authorization
+            </button>
+          </div>
+        </div>
+
+        <!-- Card Scanner Message -->
+        <div id="scannerMessage" class="card-form">
+          <div style="text-align: center; padding: 40px 20px">
+            <svg
+              style="height: 60px; margin-bottom: 20px; color: #2f2ee9"
+              fill="none"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                d="M4 4h5v5H4zM15 4h5v5h-5zM4 15h5v5H4zM15 15h5v5h-5z"
+              />
+            </svg>
+            <p style="color: #829298; margin-bottom: 20px; font-size: 14px">
+              Waiting for card scanner input...
+            </p>
+            <p style="color: #629298; font-size: 12px; margin-bottom: 20px">
+              Please insert or swipe the card
+            </p>
+            <button class="btn btn-secondary" onclick="showCardInput('manual')">
+              Switch to Manual Entry
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let selectedNetwork = null;
+      let selectedCardMethod = null;
+
+      function initPayment() {
+        const paymentMethod = localStorage.getItem("paymentMethod");
+        const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
+
+        // Display total amount
+        const total = checkoutData?.total || 0;
+        document.getElementById("totalAmount").textContent =
+          "$" + total.toFixed(2);
+
+        // Show appropriate payment section
+        if (paymentMethod === "cash") {
+          document.getElementById("cashSection").classList.add("active");
+          document.getElementById("headerTitle").textContent =
+            "Mobile Money Payment";
+          document.getElementById("headerSubtitle").textContent =
+            "Select your network and enter your mobile number";
+        } else if (paymentMethod === "card") {
+          document.getElementById("cardSection").classList.add("active");
+          document.getElementById("headerTitle").textContent = "Card Payment";
+          document.getElementById("headerSubtitle").textContent =
+            "Choose how you want to provide your card details";
+        }
+      }
+
+      function selectNetwork(element, network) {
+        // Remove previous selection
+        document.querySelectorAll(".network-card").forEach((card) => {
+          card.classList.remove("selected");
+        });
+        // Add selection to clicked card
+        element.classList.add("selected");
+        selectedNetwork = network;
+        document.getElementById("cashError").classList.remove("show");
+      }
+
+      function processCashPayment() {
+        const mobileNumber = document
+          .getElementById("mobileNumber")
+          .value.trim();
+        const errorElement = document.getElementById("cashError");
+
+        // Validation
+        if (!selectedNetwork) {
+          errorElement.textContent = "Please select a network";
+          errorElement.classList.add("show");
+          return;
+        }
+
+        if (!mobileNumber || mobileNumber.length !== 10) {
+          errorElement.textContent =
+            "Please enter a valid 10-digit mobile number";
+          errorElement.classList.add("show");
+          return;
+        }
+
+        if (!/^\d+$/.test(mobileNumber)) {
+          errorElement.textContent = "Mobile number must contain only digits";
+          errorElement.classList.add("show");
+          return;
+        }
+
+        // Save payment details
+        const paymentDetails = {
+          method: "cash",
+          network: selectedNetwork,
+          mobileNumber: mobileNumber,
+        };
+
+        localStorage.setItem("paymentDetails", JSON.stringify(paymentDetails));
+
+        // Go to authorization
+        window.location.href = "authorization.html";
+      }
+
+      function showCardInput(method) {
+        selectedCardMethod = method;
+        document.getElementById("manualCardForm").classList.remove("active");
+        document.getElementById("scannerMessage").classList.remove("active");
+
+        if (method === "manual") {
+          document.getElementById("manualCardForm").classList.add("active");
+        } else {
+          document.getElementById("scannerMessage").classList.add("active");
+          // Simulate card scanner input (in real scenario, card scanner would input data)
+          document.addEventListener("keydown", handleScannerInput);
+        }
+      }
+
+      function formatCardNumber(input) {
+        let value = input.value.replace(/\s+/g, "").replace(/[^0-9]/g, "");
+        let formatted = "";
+        for (let i = 0; i < value.length; i++) {
+          if (i > 0 && i % 4 === 0) {
+            formatted += " ";
+          }
+          formatted += value[i];
+        }
+        input.value = formatted;
+      }
+
+      function formatExpiry(input) {
+        let value = input.value.replace(/[^0-9]/g, "");
+        if (value.length >= 2) {
+          value = value.substring(0, 2) + "/" + value.substring(2, 4);
+        }
+        input.value = value;
+      }
+
+      function processCardPayment() {
+        const cardNumber = document
+          .getElementById("cardNumber")
+          .value.replace(/\s+/g, "");
+        const expiryDate = document.getElementById("expiryDate").value;
+        const cvv = document.getElementById("cvv").value;
+        const cardholderName = document
+          .getElementById("cardholderName")
+          .value.trim();
+        const errorElement = document.getElementById("cardError");
+
+        // Validation
+        if (!cardNumber || cardNumber.length !== 16) {
+          errorElement.textContent =
+            "Please enter a valid 16-digit card number";
+          errorElement.classList.add("show");
+          return;
+        }
+
+        if (!expiryDate || !/^\d{2}\/\d{2}$/.test(expiryDate)) {
+          errorElement.textContent = "Please enter expiry date in MM/YY format";
+          errorElement.classList.add("show");
+          return;
+        }
+
+        if (!cvv || cvv.length !== 3) {
+          errorElement.textContent = "Please enter a valid 3-digit CVV";
+          errorElement.classList.add("show");
+          return;
+        }
+
+        if (!cardholderName) {
+          errorElement.textContent = "Please enter cardholder name";
+          errorElement.classList.add("show");
+          return;
+        }
+
+        // Save payment details (masked for security)
+        const paymentDetails = {
+          method: "card",
+          cardLast4: cardNumber.slice(-4),
+          cardholderName: cardholderName,
+          expiryDate: expiryDate,
+        };
+
+        localStorage.setItem("paymentDetails", JSON.stringify(paymentDetails));
+
+        // Go to authorization
+        window.location.href = "authorization.html";
+      }
+
+      function handleScannerInput(event) {
+        // This would be triggered by actual card scanner
+        // For demo, press Enter to simulate card swipe completion
+        if (event.key === "Enter") {
+          const paymentDetails = {
+            method: "card",
+            scannerUsed: true,
+            cardScanned: true,
+          };
+          localStorage.setItem(
+            "paymentDetails",
+            JSON.stringify(paymentDetails),
+          );
+          window.location.href = "authorization.html";
+        }
+      }
+
+      function goBack() {
+        if (confirm("Are you sure? You will return to checkout.")) {
+          window.location.href = "checkout.html";
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", initPayment);
+    </script>
+  </body>
+</html>

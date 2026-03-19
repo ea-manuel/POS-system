@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RetailHub - POS Login</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .login-wrapper {
+        width: 100%;
+        max-width: 460px;
+      }
+
+      .login-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        padding: 45px 35px;
+        margin-bottom: 20px;
+      }
+
+      .logo-section {
+        text-align: center;
+        margin-bottom: 35px;
+      }
+
+      .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #2f2ee9 0%, #1a1ac0 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 28px;
+        box-shadow: 0 4px 12px rgba(47, 46, 233, 0.2);
+      }
+
+      .logo-section h1 {
+        font-size: 26px;
+        color: #2b2b2f;
+        font-weight: 700;
+        margin-bottom: 6px;
+        letter-spacing: -0.5px;
+      }
+
+      .logo-section p {
+        color: #888;
+        font-size: 13px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #2b2b2f;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background: #f9f9f9;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #2f2ee9;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(47, 46, 233, 0.08);
+      }
+
+      .form-group input::placeholder {
+        color: #999;
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 12px;
+        background: linear-gradient(135deg, #2f2ee9 0%, #1a1ac0 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 15px;
+        box-shadow: 0 4px 12px rgba(47, 46, 233, 0.2);
+      }
+
+      .login-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(47, 46, 233, 0.3);
+      }
+
+      .login-btn:active {
+        transform: translateY(0);
+      }
+
+      .show-password {
+        display: flex;
+        align-items: center;
+        margin-top: 8px;
+        font-size: 13px;
+        color: #555;
+        user-select: none;
+      }
+
+      .show-password input {
+        margin-right: 8px;
+        width: 16px;
+        height: 16px;
+      }
+
+      .error-message {
+        background: #fee;
+        border: 1px solid #ffb3b3;
+        color: #c00;
+        padding: 11px 13px;
+        border-radius: 6px;
+        font-size: 13px;
+        margin-bottom: 15px;
+        display: none;
+      }
+
+      .error-message.show {
+        display: block;
+      }
+
+      .admin-link {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .admin-link a {
+        color: #2f2ee9;
+        font-size: 13px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+      }
+
+      .admin-link a:hover {
+        color: #1a1ac0;
+        text-decoration: underline;
+      }
+
+      /* Toast notification styles */
+      .toast {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        font-size: 14px;
+        font-weight: 500;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @media (max-width: 480px) {
+        .login-container {
+          padding: 35px 25px;
+        }
+
+        .logo-section h1 {
+          font-size: 22px;
+        }
+
+        .logo-icon {
+          width: 45px;
+          height: 45px;
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-wrapper">
+      <div class="login-container">
+        <div class="logo-section">
+          <div class="logo-icon">🛒</div>
+          <h1>RetailHub</h1>
+          <p>Point of Sale System</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="username">Employee ID</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="Enter your ID"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              required
+            />
+            <label class="show-password">
+              <input
+                type="checkbox"
+                id="showPassword"
+                onchange="togglePassword()"
+              />
+              Show password
+            </label>
+          </div>
+
+          <button type="button" onclick="signIn()" class="login-btn">
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast">Login successful! Redirecting...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      // This ensures the code only runs after the Supabase library is fully loaded
+      let client;
+
+      function initSupabase() {
+        const supabaseUrl = "https://czrfdcarnyesbfgnlums.supabase.co";
+        const supabaseKey =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6cmZkY2Fybnllc2JmZ25sdW1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDY2ODAsImV4cCI6MjA4ODkyMjY4MH0.trHM_a4BJk3kpid_oi7Exz8T3U7I13mXtRwnLaG3nkY"; // Use your full key here
+
+        // Use the global 'supabase' object provided by the CDN
+        client = window.supabase.createClient(supabaseUrl, supabaseKey);
+      }
+
+      // Run init immediately
+      initSupabase();
+
+      async function signIn() {
+        const empId = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (!empId || !password) {
+          alert("Please enter both ID and password");
+          return;
+        }
+
+        const fakeEmail = `${empId}@retailhub.com`;
+
+        // We use the 'client' variable we created above
+        const { data, error } = await client.auth.signInWithPassword({
+          email: fakeEmail,
+          password: password,
+        });
+
+        if (error) {
+          alert("Login failed: " + error.message);
+        } else {
+          // Inside your success block in index.html
+          const {
+            data: { user },
+          } = await client.auth.getUser();
+          const role = user.user_metadata.role;
+
+          showToast("Login successful! Redirecting...");
+          localStorage.setItem("isLoggedIn", "true");
+
+          setTimeout(() => {
+            if (role === "admin") {
+              window.location.href = "admin.html"; // Secret Admin Page
+            } else {
+              window.location.href = "main.html"; // Regular Cashier POS
+            }
+          }, 2000);
+        }
+      }
+
+      // Toast function (keep this if you're using it)
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.innerText = msg;
+        toast.classList.add("show");
+      }
+
+      // Toggle password visibility
+      function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const showPasswordCheckbox = document.getElementById("showPassword");
+        passwordInput.type = showPasswordCheckbox.checked ? "text" : "password";
+      }
+    </script>
+  </body>
+</html>

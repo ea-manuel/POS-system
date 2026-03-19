@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - POS System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f7ee;
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .checkout-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .checkout-header {
+        background: linear-gradient(135deg, #2f2ee9 0%, #1a1ac0 100%);
+        color: white;
+        padding: 25px;
+        text-align: center;
+      }
+
+      .checkout-header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .checkout-header p {
+        font-size: 14px;
+        opacity: 0.9;
+      }
+
+      .checkout-content {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 30px;
+        padding: 30px;
+      }
+
+      @media (max-width: 768px) {
+        .checkout-content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Items Table */
+      .items-section h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2b2b2f;
+        margin-bottom: 15px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #e8e8e8;
+      }
+
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .items-table thead {
+        background-color: #f5f5f5;
+      }
+
+      .items-table th {
+        text-align: left;
+        padding: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #707175;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .items-table tbody tr {
+        border-bottom: 1px solid #e8e8e8;
+        transition: background-color 0.2s;
+      }
+
+      .items-table tbody tr:hover {
+        background-color: #f9f9f9;
+      }
+
+      .items-table td {
+        padding: 15px 12px;
+        font-size: 14px;
+        color: #47484b;
+      }
+
+      .item-name {
+        font-weight: 600;
+        color: #2b2b2f;
+      }
+
+      .item-barcode {
+        font-size: 12px;
+        color: #829298;
+        font-family: "Courier New", monospace;
+      }
+
+      .item-qty {
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .item-price {
+        text-align: right;
+        font-weight: 600;
+      }
+
+      .item-subtotal {
+        text-align: right;
+        font-weight: 700;
+        color: #2f2ee9;
+      }
+
+      .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 40px;
+        color: #829298;
+      }
+
+      .empty-state p {
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .order-summary {
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #e8e8e8;
+      }
+
+      .order-summary h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2b2b2f;
+        margin-bottom: 15px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #e8e8e8;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 13px;
+        color: #707175;
+      }
+
+      .summary-row strong {
+        color: #2b2b2f;
+        font-weight: 600;
+      }
+
+      .summary-row.total {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2f2ee9;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid #e8e8e8;
+      }
+
+      .budget-info {
+        background: #e8f4f2;
+        border-left: 4px solid #06b6d4;
+        padding: 12px;
+        border-radius: 4px;
+        margin-top: 15px;
+        font-size: 12px;
+        color: #0e7490;
+      }
+
+      .budget-info strong {
+        font-weight: 600;
+      }
+
+      /* Payment Method */
+      .payment-method {
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #e8e8e8;
+      }
+
+      .payment-method h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2b2b2f;
+        margin-bottom: 15px;
+      }
+
+      .payment-options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .payment-option {
+        display: flex;
+        align-items: center;
+      }
+
+      .payment-option input[type="radio"] {
+        margin-right: 10px;
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+      }
+
+      .payment-option label {
+        cursor: pointer;
+        flex: 1;
+        font-size: 14px;
+        color: #47484b;
+      }
+
+      /* Action Buttons */
+      .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        flex: 1;
+        padding: 12px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #2f2ee9 0%, #1a1ac0 100%);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(47, 46, 233, 0.3);
+      }
+
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      .btn-secondary {
+        background: #e8e8e8;
+        color: #2b2b2f;
+      }
+
+      .btn-secondary:hover {
+        background: #d8d8d8;
+      }
+
+      .no-items {
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .no-items p {
+        color: #829298;
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+
+      .btn-back {
+        background: #2f2ee9;
+        color: white;
+        text-decoration: none;
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 6px;
+        transition: all 0.3s;
+      }
+
+      .btn-back:hover {
+        background: #1a1ac0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="checkout-container">
+      <div class="checkout-header">
+        <h1>Order Review</h1>
+        <p>Please review your items before proceeding to payment</p>
+      </div>
+
+      <div id="checkoutContent" class="checkout-content">
+        <!-- Items will be loaded here by JavaScript -->
+      </div>
+    </div>
+
+    <script>
+      // Sample items database matching main.html
+      const itemsDatabase = [
+        { id: 1, barcode: "001234567890", name: "Apple", price: 1.5 },
+        { id: 2, barcode: "001234567891", name: "Banana", price: 0.75 },
+        { id: 3, barcode: "001234567892", name: "Milk", price: 3.25 },
+        { id: 4, barcode: "001234567893", name: "Bread", price: 2.5 },
+        { id: 5, barcode: "001234567894", name: "Cheese", price: 4.99 },
+        { id: 6, barcode: "001234567895", name: "Eggs", price: 3.75 },
+        { id: 7, barcode: "001234567896", name: "Yogurt", price: 2.25 },
+        { id: 8, barcode: "001234567897", name: "Coffee", price: 6.5 },
+        { id: 9, barcode: "001234567898", name: "Tea", price: 4.0 },
+        { id: 10, barcode: "001234567899", name: "Juice", price: 3.5 },
+      ];
+
+      function loadCheckout() {
+        const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
+
+        if (
+          !checkoutData ||
+          !checkoutData.items ||
+          checkoutData.items.length === 0
+        ) {
+          showEmptyState();
+          return;
+        }
+
+        const { items, budget, subtotal, tax, total } = checkoutData;
+
+        // Build items table
+        let itemsHTML = `
+                <div class="items-section">
+                    <h2>Order Items</h2>
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th style="text-align: center;">Qty</th>
+                                <th style="text-align: right;">Price</th>
+                                <th style="text-align: right;">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+        items.forEach((cartItem) => {
+          const itemPrice = (cartItem.price * cartItem.quantity).toFixed(2);
+          itemsHTML += `
+                    <tr>
+                        <td>
+                            <div class="item-name">${cartItem.name}</div>
+                            <div class="item-barcode">${cartItem.barcode}</div>
+                        </td>
+                        <td class="item-qty">${cartItem.quantity}</td>
+                        <td class="item-price">$${cartItem.price.toFixed(2)}</td>
+                        <td class="item-subtotal">$${itemPrice}</td>
+                    </tr>
+                `;
+        });
+
+        itemsHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        // Build sidebar
+        let sidebarHTML = `
+                <div class="sidebar">
+                    <div class="order-summary">
+                        <h3>Order Summary</h3>
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <strong>$${subtotal.toFixed(2)}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (10%):</span>
+                            <strong>$${tax.toFixed(2)}</strong>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <strong>$${total.toFixed(2)}</strong>
+                        </div>
+            `;
+
+        if (budget) {
+          const remaining = (budget - total).toFixed(2);
+          const statusClass = total > budget ? "exceeded" : "ok";
+          sidebarHTML += `
+                    <div class="budget-info">
+                        <strong>Budget:</strong> $${budget.toFixed(2)}<br>
+                        <strong>Remaining:</strong> $${remaining}
+                    </div>
+                `;
+        }
+
+        sidebarHTML += `
+                    </div>
+
+                    <div class="payment-method">
+                        <h3>Payment Method</h3>
+                        <div class="payment-options">
+                            <div class="payment-option">
+                                <input type="radio" id="cash" name="payment" value="cash" checked>
+                                <label for="cash">Cash</label>
+                            </div>
+                            <div class="payment-option">
+                                <input type="radio" id="card" name="payment" value="card">
+                                <label for="card">Credit/Debit Card</label>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary" onclick="completeOrder()">Complete Order</button>
+                            <button class="btn btn-secondary" onclick="goBack()">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        document.getElementById("checkoutContent").innerHTML =
+          itemsHTML + sidebarHTML;
+      }
+
+      function showEmptyState() {
+        document.getElementById("checkoutContent").innerHTML = `
+                <div class="no-items">
+                    <p>No items in checkout</p>
+                    <a href="main.html" class="btn-back">Return to POS</a>
+                </div>
+            `;
+      }
+
+      function completeOrder() {
+        const selectedPayment = document.querySelector(
+          'input[name="payment"]:checked',
+        ).value;
+        const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
+
+        // Save payment method and checkout data for payment page
+        localStorage.setItem("paymentMethod", selectedPayment);
+        localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
+
+        // Redirect to payment page
+        window.location.href = "payment.html";
+      }
+
+      function goBack() {
+        if (
+          confirm(
+            "Are you sure? This will return to the POS without completing the order.",
+          )
+        ) {
+          window.location.href = "main.html";
+        }
+      }
+
+      // Load checkout on page load
+      document.addEventListener("DOMContentLoaded", loadCheckout);
+    </script>
+  </body>
+</html>

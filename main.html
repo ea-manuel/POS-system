@@ -1,0 +1,1449 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POS - Cashier Terminal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #f0f7ee;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .main {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 20px;
+        min-height: 100vh;
+        max-width: 1500px;
+        margin: 0 auto;
+      }
+
+      /* HEADER - BUDGET & SEARCH LAYOUT */
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 30px;
+        gap: 40px;
+        position: relative;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+      }
+
+      .header-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        justify-content: center;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        flex-shrink: 0;
+      }
+
+      .employee-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 16px;
+        background: white;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 13px;
+      }
+
+      .employee-icon {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, #2f2ee9 0%, #1a1ac0 100%);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+
+      .employee-details {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .employee-label {
+        font-size: 11px;
+        color: #888;
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .employee-name {
+        font-weight: 600;
+        color: #2b2b2f;
+      }
+
+      .logout-btn {
+        padding: 10px 16px;
+        background: #ffebee;
+        border: 1.5px solid #ffb3b3;
+        border-radius: 8px;
+        color: #c00;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .logout-btn:hover {
+        background: #ffcdd2;
+        border-color: #ff8a80;
+      }
+
+      .logout-btn:active {
+        transform: scale(0.95);
+      }
+
+      .logout-btn svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .budget-control {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .budget-control label {
+        font-size: 13px;
+        color: #666;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .budget-input-wrapper {
+        display: flex;
+        gap: 8px;
+      }
+
+      .budget-input-wrapper input {
+        width: 150px;
+        padding: 10px;
+        border: 2px solid #829298;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .budget-input-wrapper input:focus {
+        outline: none;
+        border-color: #2f2ee9;
+        box-shadow: 0 0 0 3px rgba(47, 46, 233, 0.1);
+      }
+
+      .svg-icon {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        margin-right: 6px;
+      }
+
+      /* FORM SEARCH BAR */
+      .form {
+        --timing: 0.3s;
+        --width-of-input: 350px;
+        --height-of-input: 40px;
+        --border-height: 2px;
+        --input-bg: #fff;
+        --border-color: #2f2ee9;
+        --border-radius: 6px;
+        --after-border-radius: 1px;
+        position: relative;
+        width: var(--width-of-input);
+        height: var(--height-of-input);
+        display: flex;
+        align-items: center;
+        padding-inline: 0.8em;
+        border-radius: var(--border-radius);
+        transition: border-radius 0.5s ease;
+        background: var(--input-bg, #fff);
+        border: 2px solid #829298;
+      }
+
+      .form button {
+        border: none;
+        background: none;
+        color: #666;
+        cursor: pointer;
+        padding: 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .form button svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .form .input {
+        font-size: 14px;
+        background-color: transparent;
+        width: 100%;
+        height: 100%;
+        padding-inline: 0.5em;
+        padding-block: 0.7em;
+        border: none;
+      }
+
+      .form:before {
+        content: "";
+        position: absolute;
+        background: var(--border-color);
+        transform: scaleX(0);
+        transform-origin: center;
+        width: 100%;
+        height: var(--border-height);
+        left: 0;
+        bottom: 0;
+        border-radius: 1px;
+        transition: transform var(--timing) ease;
+      }
+
+      .form:focus-within {
+        border-radius: var(--after-border-radius);
+      }
+
+      .form:focus-within:before {
+        transform: scale(1);
+      }
+
+      .form .reset {
+        opacity: 0;
+        visibility: hidden;
+        padding: 0;
+        margin-left: 5px;
+      }
+
+      .form .input:not(:placeholder-shown) ~ .reset {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .form .input:focus {
+        outline: none;
+      }
+
+      /* Search Suggestions Dropdown */
+      #suggestionsDropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        border: 2px solid #829298;
+        border-top: none;
+        border-radius: 0 0 6px 6px;
+        max-height: 300px;
+        overflow-y: auto;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-top: -2px;
+      }
+
+      #suggestionsDropdown.show {
+        display: block;
+      }
+
+      .suggestion-item {
+        padding: 10px 15px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.2s ease;
+      }
+
+      .suggestion-item:hover,
+      .suggestion-item.active {
+        background-color: #2f2ee9;
+        color: white;
+      }
+
+      .suggestion-item:last-child {
+        border-bottom: none;
+      }
+
+      .suggestion-item-name {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .suggestion-item-price {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+
+      /* WORKAREA - MAIN CONTENT */
+      .workarea {
+        border: 3px solid #829298;
+        width: 100%;
+        height: 50vh;
+        overflow-y: auto;
+        overflow-x: auto;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+        background: white;
+        border-radius: 8px;
+      }
+
+      .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #999;
+        text-align: center;
+      }
+
+      .empty-state h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #666;
+      }
+
+      .empty-state p {
+        font-size: 16px;
+        color: #999;
+        max-width: 400px;
+      }
+
+      /* CART TABLE */
+      .cart-table-wrapper {
+        width: 100%;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table thead {
+        background: #2a2f3b;
+        color: white;
+        position: sticky;
+        top: 0;
+      }
+
+      table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #1a1d2e;
+      }
+
+      table td {
+        padding: 15px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      table tr:hover {
+        background: #f9fafb;
+      }
+
+      .item-name {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .item-barcode {
+        font-size: 12px;
+        color: #999;
+        font-family: monospace;
+      }
+
+      .qty-input {
+        width: 70px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        text-align: center;
+      }
+
+      .qty-input:focus {
+        outline: none;
+        border-color: #2f2ee9;
+      }
+
+      .price-col {
+        font-weight: 600;
+        color: #2f2ee9;
+      }
+
+      .stock-col {
+        font-weight: 600;
+        color: #666;
+      }
+
+      .remove-btn {
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .remove-btn:hover {
+        background: #ff5252;
+        transform: scale(1.05);
+      }
+
+      .remove-btn svg {
+        width: 14px;
+        height: 14px;
+      }
+
+      /* TOTALS SECTION */
+      .totals-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        border: 2px solid #829298;
+      }
+
+      .total-info {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .total-row {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .total-label {
+        color: #666;
+        font-size: 14px;
+        font-weight: 600;
+        min-width: 150px;
+      }
+
+      .total-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2f2ee9;
+      }
+
+      .total-row.grand-total .total-label {
+        font-size: 18px;
+        color: #333;
+      }
+
+      .total-row.grand-total .total-value {
+        font-size: 32px;
+        color: #2f2ee9;
+      }
+
+      .budget-status-indicator {
+        padding: 12px;
+        border-radius: 6px;
+        background: #f0f7ff;
+        border-left: 4px solid #2f2ee9;
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .budget-status-indicator.warning {
+        background: #fffbea;
+        border-left-color: #ffc107;
+      }
+
+      .budget-status-indicator.exceeded {
+        background: #ffebee;
+        border-left-color: #ff6b6b;
+      }
+
+      .budget-status-indicator svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+
+      /* BUTTONS */
+      .button-group {
+        display: flex;
+        gap: 15px;
+        flex-direction: column;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 150px;
+      }
+
+      .btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .btn-checkout {
+        background: linear-gradient(135deg, #2f2ee9 0%, #667eea 100%);
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-checkout:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(47, 46, 233, 0.3);
+      }
+
+      .btn-checkout:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-clear {
+        background: #f5f5f5;
+        color: #666;
+        border: 2px solid #ddd;
+      }
+
+      .btn-clear:hover {
+        background: #e8e8e8;
+        border-color: #999;
+      }
+
+      /* NOTIFICATIONS */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        animation: slideIn 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .notification.success {
+        background: #51cf66;
+      }
+
+      .notification.warning {
+        background: #ffc107;
+        color: #333;
+      }
+
+      .notification.error {
+        background: #ff6b6b;
+      }
+
+      .notification svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 1024px) {
+        .header {
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+        }
+
+        .header-right {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .totals-section {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 20px;
+        }
+
+        .button-group {
+          width: 100%;
+          flex-direction: row;
+        }
+
+        .btn {
+          flex: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .header-right {
+          width: 100%;
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .employee-info {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .logout-btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .budget-control {
+          flex-direction: row;
+        }
+
+        .budget-input-wrapper input {
+          width: 120px;
+        }
+
+        .form {
+          --width-of-input: 100%;
+          max-width: 300px;
+        }
+
+        table {
+          font-size: 13px;
+        }
+
+        table th,
+        table td {
+          padding: 10px;
+        }
+
+        .total-row {
+          gap: 10px;
+        }
+
+        .total-label {
+          min-width: 100px;
+        }
+      }
+
+      /* Logout Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+
+      .modal-overlay.show .modal-content {
+        transform: scale(1);
+      }
+
+      .modal-content h3 {
+        margin: 0 0 15px 0;
+        color: #333;
+        font-size: 20px;
+      }
+
+      .modal-content p {
+        margin: 0 0 25px 0;
+        color: #666;
+        font-size: 16px;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+      }
+
+      .modal-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .modal-btn.confirm {
+        background: #dc3545;
+        color: white;
+      }
+
+      .modal-btn.confirm:hover {
+        background: #c82333;
+      }
+
+      .modal-btn.cancel {
+        background: #6c757d;
+        color: white;
+      }
+
+      .modal-btn.cancel:hover {
+        background: #5a6268;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <!-- BUDGET & SEARCH LAYOUT -->
+      <div class="header">
+        <!-- LEFT: BUDGET CONTROL -->
+        <div class="header-left">
+          <div class="budget-control">
+            <label for="budgetInput">Budget Limit ($)</label>
+            <div class="budget-input-wrapper">
+              <input
+                type="number"
+                id="budgetInput"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER: SEARCH BAR -->
+        <div class="header-center">
+          <form class="form">
+            <button
+              type="button"
+              onclick="document.getElementById('searchInput').focus()"
+            >
+              <svg
+                width="17"
+                height="16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-labelledby="search"
+              >
+                <path
+                  d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9"
+                  stroke="currentColor"
+                  stroke-width="1.333"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                ></path>
+              </svg>
+            </button>
+            <input
+              id="searchInput"
+              class="input"
+              placeholder="Scan barcode or search item..."
+              required
+              type="text"
+              autocomplete="off"
+            />
+            <button class="reset" type="reset">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            </button>
+            <div id="suggestionsDropdown"></div>
+          </form>
+        </div>
+
+        <!-- RIGHT: EMPLOYEE INFO & LOGOUT -->
+        <div class="header-right">
+          <div class="employee-info">
+            <div class="employee-icon">👤</div>
+            <div class="employee-details">
+              <div class="employee-label">Employee</div>
+              <div class="employee-name" id="employeeName">Loading...</div>
+            </div>
+          </div>
+          <button class="logout-btn" onclick="showLogoutModal()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- WORKAREA - CART DISPLAY -->
+      <div class="workarea" id="workarea">
+        <div class="empty-state">
+          <h2>Ready to scan items</h2>
+          <p>
+            Use the search box above to scan barcodes or search for items by
+            name. Items will appear here with quantity controls.
+          </p>
+        </div>
+      </div>
+
+      <!-- TOTALS & CHECKOUT -->
+      <div class="totals-section">
+        <div class="total-info">
+          <div class="total-row">
+            <span class="total-label">Items:</span>
+            <span class="total-value" id="itemsCount">0</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Subtotal:</span>
+            <span class="total-value" id="subtotal">$0.00</span>
+          </div>
+          <div class="total-row">
+            <span class="total-label">Tax (10%):</span>
+            <span class="total-value" id="tax">$0.00</span>
+          </div>
+          <div class="total-row grand-total">
+            <span class="total-label">Total:</span>
+            <span class="total-value" id="total">$0.00</span>
+          </div>
+          <div
+            id="budgetStatus"
+            class="budget-status-indicator"
+            style="display: none"
+          ></div>
+        </div>
+
+        <div class="button-group">
+          <button
+            class="btn btn-checkout"
+            id="checkoutBtn"
+            onclick="checkout()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path
+                d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+              ></path>
+            </svg>
+            Checkout
+          </button>
+          <button class="btn btn-clear" onclick="clearCart()">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path
+                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+              ></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+            Clear Cart
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+      const supabaseUrl = "https://czrfdcarnyesbfgnlums.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6cmZkY2Fybnllc2JmZ25sdW1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDY2ODAsImV4cCI6MjA4ODkyMjY4MH0.trHM_a4BJk3kpid_oi7Exz8T3U7I13mXtRwnLaG3nkY";
+
+      // Use window.supabase to be 100% sure it finds the library
+      const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+      async function loadUser() {
+        // Use 'client' or whatever name you gave your supabase.createClient
+        const {
+          data: { user },
+          error,
+        } = await client.auth.getUser();
+
+        if (user) {
+          // 2. We grab the 'display_name' we just forced into the metadata
+          const fullName = user.user_metadata.display_name;
+
+          console.log("Supabase found this user:", user);
+          console.log("The name we found is:", user.user_metadata.display_name);
+
+          // 3. Update the UI element in your header
+          const nameElement = document.getElementById("employeeName");
+
+          if (nameElement) {
+            nameElement.innerText = fullName || "Staff Member";
+          }
+
+          console.log("Logged in as:", fullName);
+        } else {
+          // 4. Security: If someone tries to type main.html without logging in,
+          // kick them back to the login screen.
+          console.log("No active session found.");
+          window.location.href = "index.html";
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        loadUser();
+      });
+
+      function handleLogout() {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("employeeId");
+        localStorage.removeItem("checkoutData");
+        window.location.href = "index.html";
+      }
+
+      // Modal functions
+      function showLogoutModal() {
+        document.getElementById("logoutModal").classList.add("show");
+      }
+
+      function hideLogoutModal() {
+        document.getElementById("logoutModal").classList.remove("show");
+      }
+
+      function confirmLogout() {
+        hideLogoutModal();
+        handleLogout();
+      }
+
+      // Database is now connected to Supabase (see addItemBySearchOrBarcode function below)
+
+      let cart = [];
+      let budget = null;
+
+      // INITIALIZE
+      document.addEventListener("DOMContentLoaded", () => {
+        setupEventListeners();
+      });
+
+      // This makes sure the "Barcode to PC" data always lands in the search box
+      function ensureFocus() {
+        const searchInput = document.getElementById("searchInput");
+        // If the user isn't currently typing in a different box, focus the search
+        if (document.activeElement.tagName !== "INPUT") {
+          searchInput.focus();
+        }
+      }
+
+      // Check focus every 1 second (Perfect for hands-free scanning)
+      setInterval(ensureFocus, 1000);
+
+      // Also focus immediately when the page loads
+      window.onload = () => document.getElementById("searchInput").focus();
+
+      function setupEventListeners() {
+        const searchInput = document.getElementById("searchInput");
+        const budgetInput = document.getElementById("budgetInput");
+
+        // Real-time search as user types
+        searchInput.addEventListener("input", (e) => {
+          const query = searchInput.value.trim();
+          if (query.length >= 1) {
+            showSuggestions(query);
+          } else {
+            hideSuggestions();
+          }
+        });
+
+        // Enter key to add item
+        searchInput.addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            e.preventDefault(); // Stop the page from refreshing
+
+            const scannedValue = this.value.trim();
+            if (scannedValue) {
+              console.log("Processing scan:", scannedValue);
+              addItemBySearchOrBarcode(scannedValue); // This calls your Supabase function
+              this.value = ""; // Clear the box so it's ready for the next scan
+              hideSuggestions();
+              this.focus();
+            }
+          }
+        });
+
+        // Hide suggestions when clicking outside
+        document.addEventListener("click", (e) => {
+          if (
+            e.target !== searchInput &&
+            !document.getElementById("suggestionsDropdown").contains(e.target)
+          ) {
+            hideSuggestions();
+          }
+        });
+
+        budgetInput.addEventListener("change", (e) => {
+          budget = parseFloat(e.target.value) || null;
+          updateBudgetStatus();
+        });
+      }
+
+      // Search Supabase for suggestions
+      async function showSuggestions(query) {
+        const { data: items, error } = await client
+          .from("Products")
+          .select("*")
+          .or(`barcode.eq.${query},name.ilike.%${query}%`)
+          .limit(8);
+
+        const dropdown = document.getElementById("suggestionsDropdown");
+
+        if (error || !items || items.length === 0) {
+          dropdown.innerHTML =
+            '<div class="suggestion-item" style="color: #999;">No items found</div>';
+          dropdown.classList.add("show");
+          return;
+        }
+
+        dropdown.innerHTML = items
+          .map(
+            (item) => `
+          <div class="suggestion-item" onclick="selectSuggestion(${item.id})">
+            <span class="suggestion-item-name">${item.name}</span>
+            <span class="suggestion-item-price">Barcode: ${item.barcode} | $${parseFloat(item.price).toFixed(2)}</span>
+          </div>
+        `,
+          )
+          .join("");
+
+        dropdown.classList.add("show");
+      }
+
+      function hideSuggestions() {
+        document.getElementById("suggestionsDropdown").classList.remove("show");
+      }
+
+      // Select item from dropdown and add to cart
+      async function selectSuggestion(itemId) {
+        const { data: item, error } = await client
+          .from("Products")
+          .select("*")
+          .eq("id", itemId)
+          .single();
+
+        if (error || !item) {
+          showNotification(`Error adding item to cart`, "error");
+          return;
+        }
+
+        // Check stock availability
+        const existingItem = cart.find((c) => c.id === item.id);
+        if (existingItem) {
+          if (existingItem.quantity >= item.stock_quantity) {
+            showNotification(
+              `Cannot add more ${item.name}. Only ${item.stock_quantity} in stock.`,
+              "error",
+            );
+            return;
+          }
+          existingItem.quantity++;
+        } else {
+          if (item.stock_quantity <= 0) {
+            showNotification(`${item.name} is out of stock.`, "error");
+            return;
+          }
+          cart.push({ ...item, quantity: 1 });
+        }
+
+        showNotification(`Added ${item.name} to cart`, "success");
+        document.getElementById("searchInput").value = "";
+        hideSuggestions();
+        renderCart();
+        updateTotals();
+        updateBudgetStatus();
+      }
+
+      // ADD ITEM BY SEARCH OR BARCODE - Fetches from Supabase
+      async function addItemBySearchOrBarcode(query) {
+        // 1. Smart Query: Search for EXACT barcode OR a name that contains the text
+        const { data: item, error } = await client
+          .from("Products")
+          .select("*")
+          .or(`barcode.eq.${query},name.ilike.%${query}%`) // Matches barcode OR name
+          .limit(1) // Just give us the best match
+          .maybeSingle();
+
+        if (error) {
+          console.error("Database error:", error);
+          return;
+        }
+
+        if (!item) {
+          showNotification(`No product found for: "${query}"`, "error");
+          return;
+        }
+
+        // 2. Add to Cart Logic
+        const existingItem = cart.find((c) => c.id === item.id);
+        if (existingItem) {
+          if (existingItem.quantity >= item.stock_quantity) {
+            showNotification(
+              `Cannot add more ${item.name}. Only ${item.stock_quantity} in stock.`,
+              "error",
+            );
+            return;
+          }
+          existingItem.quantity++;
+        } else {
+          if (item.stock_quantity <= 0) {
+            showNotification(`${item.name} is out of stock.`, "error");
+            return;
+          }
+          // We spread the item data from Supabase into our local cart array
+          cart.push({ ...item, quantity: 1 });
+        }
+
+        showNotification(`Added ${item.name} to cart`, "success");
+        renderCart();
+        updateTotals();
+        updateBudgetStatus();
+      }
+
+      // RENDER CART
+      function renderCart() {
+        const workarea = document.getElementById("workarea");
+
+        if (cart.length === 0) {
+          workarea.innerHTML = `
+                    <div class="empty-state">
+                        <h2>Ready to scan items</h2>
+                        <p>Use the search box above to scan barcodes or search for items by name. Items will appear here with quantity controls.</p>
+                    </div>
+                `;
+          return;
+        }
+
+        const tableHTML = `
+                <div class="cart-table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Barcode</th>
+                                <th>Unit Price</th>
+                                <th>Stock</th>
+                                <th>Quantity</th>
+                                <th>Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${cart
+                              .map(
+                                (item) => `
+                                <tr>
+                                    <td><div class="item-name">${item.name}</div></td>
+                                    <td><div class="item-barcode">${item.barcode}</div></td>
+                                    <td class="price-col">$${item.price.toFixed(2)}</td>
+                                    <td class="stock-col">${item.stock_quantity}</td>
+                                    <td>
+                                        <input 
+                                            type="number" 
+                                            class="qty-input" 
+                                            value="${item.quantity}" 
+                                            min="1" 
+                                            max="${item.stock_quantity}"
+                                            onchange="updateQuantity(${item.id}, this.value)"
+                                        >
+                                    </td>
+                                    <td class="price-col">$${(item.price * item.quantity).toFixed(2)}</td>
+                                    <td>
+                                        <button class="remove-btn" onclick="removeItem(${item.id})">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                            Remove
+                                        </button>
+                                    </td>
+                                </tr>
+                            `,
+                              )
+                              .join("")}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+        workarea.innerHTML = tableHTML;
+      }
+
+      // UPDATE QUANTITY
+      function updateQuantity(itemId, quantity) {
+        const item = cart.find((c) => c.id === itemId);
+        if (item) {
+          const newQty = Math.max(
+            1,
+            Math.min(parseInt(quantity) || 1, item.stock_quantity),
+          );
+          if (newQty > item.stock_quantity) {
+            showNotification(
+              `Cannot set quantity above available stock (${item.stock_quantity})`,
+              "error",
+            );
+          }
+          item.quantity = newQty;
+          renderCart();
+          updateTotals();
+          updateBudgetStatus();
+        }
+      }
+
+      // REMOVE ITEM
+      function removeItem(itemId) {
+        cart = cart.filter((c) => c.id !== itemId);
+        renderCart();
+        updateTotals();
+        updateBudgetStatus();
+        showNotification(`Item removed from cart`, "success");
+      }
+
+      // UPDATE TOTALS
+      function updateTotals() {
+        const subtotal = cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        );
+        const tax = subtotal * 0.1;
+        const total = subtotal + tax;
+        const itemsCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+        document.getElementById("itemsCount").textContent = itemsCount;
+        document.getElementById("subtotal").textContent =
+          `$${subtotal.toFixed(2)}`;
+        document.getElementById("tax").textContent = `$${tax.toFixed(2)}`;
+        document.getElementById("total").textContent = `$${total.toFixed(2)}`;
+      }
+
+      // UPDATE BUDGET STATUS
+      function updateBudgetStatus() {
+        const statusDiv = document.getElementById("budgetStatus");
+        const total =
+          cart.reduce((sum, item) => sum + item.price * item.quantity, 0) * 1.1;
+
+        if (!budget) {
+          statusDiv.style.display = "none";
+          document.getElementById("checkoutBtn").disabled = false;
+          return;
+        }
+
+        statusDiv.style.display = "block";
+        const remaining = budget - total;
+        const percentage = (total / budget) * 100;
+
+        if (total > budget) {
+          statusDiv.innerHTML = `BUDGET EXCEEDED by $${(total - budget).toFixed(2)}`;
+          statusDiv.className = "budget-status-indicator exceeded";
+          document.getElementById("checkoutBtn").disabled = true;
+          showNotification(
+            `Budget exceeded by $${(total - budget).toFixed(2)}`,
+            "error",
+          );
+        } else if (percentage >= 80) {
+          statusDiv.innerHTML = `APPROACHING LIMIT - ${percentage.toFixed(0)}% used`;
+          statusDiv.className = "budget-status-indicator warning";
+          document.getElementById("checkoutBtn").disabled = false;
+        } else {
+          statusDiv.innerHTML = `Within budget - $${remaining.toFixed(2)} remaining`;
+          statusDiv.className = "budget-status-indicator";
+          document.getElementById("checkoutBtn").disabled = false;
+        }
+      }
+
+      // CLEAR CART
+      function clearCart() {
+        cart = [];
+        budget = null;
+        document.getElementById("budgetInput").value = "";
+        renderCart();
+        updateTotals();
+        updateBudgetStatus();
+        showNotification("Cart cleared", "success");
+        document.getElementById("searchInput").focus();
+      }
+
+      // CHECKOUT
+      function checkout() {
+        if (cart.length === 0) {
+          showNotification("Cart is empty", "error");
+          return;
+        }
+
+        const total =
+          cart.reduce((sum, item) => sum + item.price * item.quantity, 0) * 1.1;
+        if (budget && total > budget) {
+          showNotification("Cannot checkout - budget exceeded", "error");
+          return;
+        }
+
+        // Save cart data to localStorage for checkout page
+        const subtotal = cart.reduce(
+          (sum, item) => sum + item.price * item.quantity,
+          0,
+        );
+        const tax = subtotal * 0.1;
+        const checkoutData = {
+          items: cart,
+          budget: budget,
+          subtotal: subtotal,
+          tax: tax,
+          total: subtotal + tax,
+          timestamp: new Date().toISOString(),
+        };
+        localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
+
+        window.location.href = "checkout.html";
+      }
+
+      // SHOW NOTIFICATION
+      function showNotification(message, type = "info") {
+        const existing = document.querySelector(".notification");
+        if (existing) existing.remove();
+
+        const notif = document.createElement("div");
+        notif.className = `notification ${type}`;
+        notif.textContent = message;
+        document.body.appendChild(notif);
+
+        setTimeout(() => notif.remove(), 4000);
+      }
+    </script>
+
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="modal-overlay">
+      <div class="modal-content">
+        <h3>Confirm Logout</h3>
+        <p>Are you sure you want to logout of your account?</p>
+        <div class="modal-buttons">
+          <button class="modal-btn cancel" onclick="hideLogoutModal()">
+            Cancel
+          </button>
+          <button class="modal-btn confirm" onclick="confirmLogout()">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

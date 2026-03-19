@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authorization - POS System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f0f7ee 0%, #e8f4f2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .auth-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        width: 100%;
+        padding: 60px 40px;
+        text-align: center;
+      }
+
+      .auth-icon {
+        font-size: 80px;
+        margin-bottom: 30px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.8;
+        }
+      }
+
+      h1 {
+        font-size: 32px;
+        color: #2b2b2f;
+        margin-bottom: 16px;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        color: #829298;
+        font-size: 16px;
+        margin-bottom: 40px;
+        line-height: 1.6;
+      }
+
+      .payment-info {
+        background: #f9f9f9;
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        text-align: left;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #e8e8e8;
+      }
+
+      .info-row:last-child {
+        border-bottom: none;
+      }
+
+      .info-label {
+        color: #829298;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .info-value {
+        color: #2b2b2f;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .amount-display {
+        font-size: 42px;
+        font-weight: 700;
+        color: #2f2ee9;
+        margin: 20px 0;
+      }
+
+      .authorize-btn {
+        width: 100%;
+        background: linear-gradient(135deg, #2f2ee9 0%, #1a1ac0 100%);
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-bottom: 15px;
+      }
+
+      .authorize-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(47, 46, 233, 0.3);
+      }
+
+      .authorize-btn:active {
+        transform: translateY(0);
+      }
+
+      .cancel-btn {
+        width: 100%;
+        background: #e8e8e8;
+        color: #2b2b2f;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .cancel-btn:hover {
+        background: #d8d8d8;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        padding: 40px 20px;
+      }
+
+      .spinner {
+        border: 4px solid #f0f7ee;
+        border-top: 4px solid #2f2ee9;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        color: #829298;
+        font-size: 14px;
+      }
+
+      @media (max-width: 480px) {
+        .auth-container {
+          padding: 40px 25px;
+        }
+
+        h1 {
+          font-size: 26px;
+        }
+
+        .subtitle {
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div id="authContent">
+        <div class="auth-icon">🔐</div>
+        <h1>Authorize Payment</h1>
+        <p class="subtitle">
+          Please review and authorize your payment to complete the transaction
+        </p>
+
+        <div class="payment-info">
+          <div class="info-row">
+            <span class="info-label">Payment Method</span>
+            <span class="info-value" id="paymentMethod">-</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Amount</span>
+            <span class="info-value" id="paymentAmount">-</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Reference</span>
+            <span
+              class="info-value"
+              id="paymentRef"
+              style="
+                font-family: &quot;Courier New&quot;, monospace;
+                font-size: 12px;
+              "
+            ></span>
+          </div>
+          <div class="info-row" id="networkRow" style="display: none">
+            <span class="info-label">Network</span>
+            <span class="info-value" id="networkName">-</span>
+          </div>
+        </div>
+
+        <p class="subtitle" style="margin-bottom: 30px">
+          By clicking "Authorize Payment", you confirm that you authorize the
+          transaction amount stated above.
+        </p>
+
+        <button class="authorize-btn" onclick="authorizePayment()">
+          I Have Authorized Payment
+        </button>
+        <button class="cancel-btn" onclick="cancelPayment()">Cancel</button>
+      </div>
+
+      <div id="loadingContent" class="loading">
+        <div class="spinner"></div>
+        <p class="loading-text">Processing your payment...</p>
+      </div>
+    </div>
+
+    <script>
+      function initAuthorization() {
+        const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
+        const paymentDetails = JSON.parse(
+          localStorage.getItem("paymentDetails"),
+        );
+
+        // Display payment information
+        const total = checkoutData?.total || 0;
+        document.getElementById("paymentAmount").textContent =
+          "$" + total.toFixed(2);
+
+        // Generate reference number
+        const refNumber = "REF" + Date.now().toString().slice(-10);
+        document.getElementById("paymentRef").textContent = refNumber;
+
+        // Display payment method details
+        if (paymentDetails.method === "cash") {
+          const networkName = paymentDetails.network.toUpperCase();
+          document.getElementById("paymentMethod").textContent = "Mobile Money";
+          document.getElementById("networkName").textContent = networkName;
+          document.getElementById("networkRow").style.display = "flex";
+        } else if (paymentDetails.method === "card") {
+          const cardDisplay = paymentDetails.scannerUsed
+            ? "Card (Scanner)"
+            : `Card ending in ${paymentDetails.cardLast4}`;
+          document.getElementById("paymentMethod").textContent = cardDisplay;
+        }
+      }
+
+      function authorizePayment() {
+        const authContent = document.getElementById("authContent");
+        const loadingContent = document.getElementById("loadingContent");
+
+        // Show loading state
+        authContent.style.display = "none";
+        loadingContent.style.display = "block";
+
+        // Simulate payment processing (2 seconds)
+        setTimeout(() => {
+          // Create receipt data
+          const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
+          const paymentDetails = JSON.parse(
+            localStorage.getItem("paymentDetails"),
+          );
+
+          const receiptData = {
+            ...checkoutData,
+            paymentMethod: paymentDetails.method,
+            paymentDetails: paymentDetails,
+            orderNumber: ("ORD" + Date.now()).slice(-10),
+            timestamp: new Date().toLocaleString("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: true,
+            }),
+            transactionId: "TXN" + Date.now(),
+          };
+
+          localStorage.setItem("receiptData", JSON.stringify(receiptData));
+          localStorage.removeItem("checkoutData");
+          localStorage.removeItem("paymentDetails");
+          localStorage.removeItem("paymentMethod");
+
+          // Redirect to receipt
+          window.location.href = "receipt.html";
+        }, 2000);
+      }
+
+      function cancelPayment() {
+        if (confirm("Are you sure? The payment will be cancelled.")) {
+          localStorage.removeItem("paymentDetails");
+          window.location.href = "checkout.html";
+        }
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", initAuthorization);
+    </script>
+  </body>
+</html>

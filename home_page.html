@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        background-color: #f0f7ee;
+      }
+      .main {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* align header and other children to left */
+        justify-content: center;
+        padding: 20px;
+      }
+      .header {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start; /* move elements to the far left */
+        width: 100%;
+      }
+      .pp {
+        border-radius: 100%;
+        background-color: gray;
+        width: 80px;
+        height: 80px;
+        margin-right: 5px;
+      }
+      .profile {
+        display: flex;
+        flex-direction: row;
+      }
+      .start_area {
+        display: flex;
+        align-items: center;
+      }
+      .form button {
+        border: none;
+        background: none;
+        color: #8b8ba7;
+      }
+      /* styling of whole input container */
+      .form {
+        --timing: 0.3s;
+        --width-of-input: 400px;
+        --height-of-input: 40px;
+        --border-height: 2px;
+        --input-bg: #fff;
+        --border-color: #2f2ee9;
+        --border-radius: 30px;
+        --after-border-radius: 1px;
+        position: relative;
+        width: var(--width-of-input);
+        height: var(--height-of-input);
+        display: flex;
+        align-items: center;
+        padding-inline: 0.8em;
+        border-radius: var(--border-radius);
+        transition: border-radius 0.5s ease;
+        background: var(--input-bg, #fff);
+        margin-bottom: 20px;
+      }
+      /* styling of Input */
+      .input {
+        font-size: 0.9rem;
+        background-color: transparent;
+        width: 100%;
+        height: 100%;
+        padding-inline: 0.5em;
+        padding-block: 0.7em;
+        border: none;
+      }
+      /* styling of animated border */
+      .form:before {
+        content: "";
+        position: absolute;
+        background: var(--border-color);
+        transform: scaleX(0);
+        transform-origin: center;
+        width: 100%;
+        height: var(--border-height);
+        left: 0;
+        bottom: 0;
+        border-radius: 1px;
+        transition: transform var(--timing) ease;
+      }
+      /* Hover on Input */
+      .form:focus-within {
+        border-radius: var(--after-border-radius);
+      }
+
+      input:focus {
+        outline: none;
+      }
+      /* here is code of animated border */
+      .form:focus-within:before {
+        transform: scale(1);
+      }
+      /* styling of close button */
+      /* == you can click the close button to remove text == */
+      .reset {
+        border: none;
+        background: none;
+        opacity: 0;
+        visibility: hidden;
+      }
+      /* close button shown when typing */
+      input:not(:placeholder-shown) ~ .reset {
+        opacity: 1;
+        visibility: visible;
+      }
+      /* sizing svg icons */
+      .form svg {
+        width: 17px;
+        margin-top: 3px;
+      }
+      .workarea {
+        /* display: flex; */
+        border: 3px solid #829298;
+        width: 100%;
+        height: 75vh;
+        overflow-y: scroll;
+        overflow-x: scroll;
+        position: relative; /* needed for centered message */
+      }
+      .workarea-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 1.2rem;
+        color: #666;
+        text-align: center;
+      }
+      .workarea-message a {
+        color: blue;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+      table {
+        width: 100%;
+      }
+      table th {
+        border: 2px solid black;
+        padding: 10px;
+      }
+      button {
+        font-family: inherit;
+        font-size: 20px;
+        background: royalblue;
+        color: white;
+        padding: 0.7em 1em;
+        padding-left: 0.9em;
+        display: flex;
+        align-items: center;
+        border: none;
+        border-radius: 13px;
+        overflow: hidden;
+        transition: all 0.2s;
+        cursor: pointer;
+        width: 150px;
+        height: 50px;
+      }
+
+      button span {
+        display: block;
+        margin-left: 0.3em;
+        transition: all 0.3s ease-in-out;
+      }
+
+      button svg {
+        display: block;
+        transform-origin: center center;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      button:hover .svg-wrapper {
+        animation: fly-1 0.6s ease-in-out infinite alternate;
+      }
+
+      button:hover svg {
+        transform: translateX(1.2em) rotate(45deg) scale(1.1);
+      }
+
+      button:hover span {
+        transform: translateX(6em);
+      }
+
+      button:active {
+        transform: scale(0.95);
+      }
+
+      @keyframes fly-1 {
+        from {
+          transform: translateY(0.1em);
+        }
+
+        to {
+          transform: translateY(-0.1em);
+        }
+      }
+      .total {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        width: 95%;
+        justify-content: center;
+        margin-left: 20px;
+        text-align: center;
+      }
+      .total-amount {
+        font-size: 2rem;
+        margin: 0.2em 0;
+      }
+      .select {
+        width: fit-content;
+        cursor: pointer;
+        position: relative;
+        transition: 300ms;
+        color: white;
+        /* overflow: hidden; */
+      }
+      /* number input styling replacing the old options dropdown */
+      .select input[type="number"] {
+        width: 120px;
+        padding: 5px;
+        font-size: 1rem;
+        border: 1px solid #2a2f3b;
+        border-radius: 5px;
+      }
+
+      .selected {
+        background-color: #2a2f3b;
+        padding: 5px;
+        margin-bottom: 3px;
+        border-radius: 5px;
+        position: relative;
+        z-index: 100000;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .arrow {
+        position: relative;
+        right: 0px;
+        height: 10px;
+        transform: rotate(-90deg);
+        width: 25px;
+        fill: white;
+        z-index: 100000;
+        transition: 300ms;
+      }
+
+      /* old dropdown options styles removed since select now only contains the number textbox */
+    </style>
+  </head>
+  <body>
+    <!-- <div class="profile">
+            <div class="pp"></div>
+           <h1>Welcome Back <br> User</h1>
+        </div> -->
+    <div class="main">
+      <div class="header">
+        <div class="select">
+          <!-- single numeric input box used for setting customer budget -->
+          <input type="number" placeholder="Budget" min="0" step="0.01" />
+        </div>
+        <form class="form">
+          <button>
+            <svg
+              width="17"
+              height="16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-labelledby="search"
+            >
+              <path
+                d="M7.667 12.667A5.333 5.333 0 107.667 2a5.333 5.333 0 000 10.667zM14.334 14l-2.9-2.9"
+                stroke="currentColor"
+                stroke-width="1.333"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              ></path>
+            </svg>
+          </button>
+          <input
+            id="searchInput"
+            class="input"
+            placeholder="Type your text"
+            required=""
+            type="text"
+          />
+          <button class="reset" type="reset">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </form>
+        <div></div>
+      </div>
+      <div class="workarea">
+        <!-- message centered inside workarea when empty -->
+        <div class="workarea-message">
+          Start scan or search for items manually
+          <a href="#searchInput">here</a>
+        </div>
+        <table>
+          <tr>
+            <th>Item</th>
+            <th>Unit Price</th>
+            <th>Quantity</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="total">
+      <h1>Net Total($)</h1>
+      <p class="total-amount">0.00</p>
+      <a href="checkout.html">
+        <button>
+          <div class="svg-wrapper-1">
+            <div class="svg-wrapper">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                fill="none"
+                stroke="currentColor"
+                class="icon"
+              >
+                <circle r="1" cy="21" cx="9"></circle>
+                <circle r="1" cy="21" cx="20"></circle>
+                <path
+                  d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <span>Checkout</span>
+        </button>
+      </a>
+    </div>
+  </body>
+</html>
