@@ -195,6 +195,136 @@
         transform: translateY(0);
       }
 
+      /* Custom Modal Styles */
+      .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .custom-modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .custom-modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+      .custom-modal-overlay.show .custom-modal-content {
+        transform: scale(1);
+      }
+      .custom-modal-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+      .custom-modal-content h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 20px;
+      }
+      .custom-modal-content p {
+        margin: 0 0 25px 0;
+        color: #666;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .custom-modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      .custom-modal-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .custom-modal-btn.primary {
+        background: #2f2ee9;
+        color: white;
+      }
+      .custom-modal-btn.primary:hover {
+        background: #1a1ac0;
+      }
+      .custom-modal-btn.secondary {
+        background: #e8e8e8;
+        color: #333;
+      }
+      .custom-modal-btn.secondary:hover {
+        background: #d8d8d8;
+      }
+      .custom-modal-btn.danger {
+        background: #dc3545;
+        color: white;
+      }
+      .custom-modal-btn.danger:hover {
+        background: #c82333;
+      }
+      .custom-modal-btn.success {
+        background: #28a745;
+        color: white;
+      }
+      .custom-modal-btn.success:hover {
+        background: #218838;
+      }
+
+      /* Global Loader Styles */
+      .global-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .global-loader.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .loader-spinner {
+        border: 4px solid #e8e8e8;
+        border-top: 4px solid #2f2ee9;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+      }
+      .global-loader p {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2b2b2f;
+        margin: 0;
+      }
+
       @media (max-width: 480px) {
         .login-container {
           padding: 35px 25px;
@@ -262,6 +392,22 @@
     <!-- Toast notification -->
     <div id="toast" class="toast">Login successful! Redirecting...</div>
 
+    <!-- Custom Modal -->
+    <div id="customModal" class="custom-modal-overlay">
+      <div class="custom-modal-content">
+        <div id="customModalIcon" class="custom-modal-icon"></div>
+        <h3 id="customModalTitle">Title</h3>
+        <p id="customModalMessage">Message</p>
+        <div class="custom-modal-actions" id="customModalActions"></div>
+      </div>
+    </div>
+
+    <!-- Global Loader -->
+    <div id="globalLoader" class="global-loader">
+      <div class="loader-spinner"></div>
+      <p id="loaderMessage">Loading...</p>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
       // This ensures the code only runs after the Supabase library is fully loaded
@@ -279,16 +425,32 @@
       // Run init immediately
       initSupabase();
 
+      function showLoader(msg = "Loading...") {
+        const loaderMessage = document.getElementById("loaderMessage");
+        if (loaderMessage) loaderMessage.textContent = msg;
+        document.getElementById("globalLoader").classList.add("show");
+      }
+
+      function hideLoader() {
+        document.getElementById("globalLoader").classList.remove("show");
+      }
+
       async function signIn() {
         const empId = document.getElementById("username").value;
         const password = document.getElementById("password").value;
 
         if (!empId || !password) {
-          alert("Please enter both ID and password");
+          showCustomModal({
+            title: "Login Error",
+            message: "Please enter both ID and password",
+            type: "error",
+          });
           return;
         }
 
         const fakeEmail = `${empId}@retailhub.com`;
+
+        showLoader("Authenticating...");
 
         // We use the 'client' variable we created above
         const { data, error } = await client.auth.signInWithPassword({
@@ -297,7 +459,12 @@
         });
 
         if (error) {
-          alert("Login failed: " + error.message);
+          hideLoader();
+          showCustomModal({
+            title: "Login Error",
+            message: "Login failed: " + error.message,
+            type: "error",
+          });
         } else {
           // Inside your success block in index.html
           const {
@@ -305,12 +472,14 @@
           } = await client.auth.getUser();
           const role = user.user_metadata.role;
 
-          showToast("Login successful! Redirecting...");
+          showLoader("Login successful! Redirecting...");
           localStorage.setItem("isLoggedIn", "true");
 
           setTimeout(() => {
             if (role === "admin") {
               window.location.href = "admin.html"; // Secret Admin Page
+            } else if (role === "manager") {
+              window.location.href = "manager.html"; // Manager Page
             } else {
               window.location.href = "main.html"; // Regular Cashier POS
             }
@@ -330,6 +499,55 @@
         const passwordInput = document.getElementById("password");
         const showPasswordCheckbox = document.getElementById("showPassword");
         passwordInput.type = showPasswordCheckbox.checked ? "text" : "password";
+      }
+
+      function showCustomModal({
+        title,
+        message,
+        type = "info",
+        confirmText = "OK",
+        cancelText = "Cancel",
+        onConfirm = null,
+      }) {
+        const modal = document.getElementById("customModal");
+        document.getElementById("customModalTitle").textContent = title;
+        document.getElementById("customModalMessage").textContent = message;
+
+        let icon = "ℹ️",
+          confirmClass = "primary";
+        if (type === "success") {
+          icon = "✅";
+          confirmClass = "success";
+        } else if (type === "error") {
+          icon = "❌";
+          confirmClass = "danger";
+        } else if (type === "warning" || type === "confirm") {
+          icon = "⚠️";
+          confirmClass = "primary";
+        }
+
+        document.getElementById("customModalIcon").textContent = icon;
+        const actionsEl = document.getElementById("customModalActions");
+        actionsEl.innerHTML = "";
+
+        if (type === "confirm") {
+          const cancelBtn = document.createElement("button");
+          cancelBtn.className = "custom-modal-btn secondary";
+          cancelBtn.textContent = cancelText;
+          cancelBtn.onclick = () => modal.classList.remove("show");
+          actionsEl.appendChild(cancelBtn);
+        }
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.className = `custom-modal-btn ${confirmClass}`;
+        confirmBtn.textContent = confirmText;
+        confirmBtn.onclick = () => {
+          modal.classList.remove("show");
+          if (onConfirm) onConfirm();
+        };
+        actionsEl.appendChild(confirmBtn);
+
+        modal.classList.add("show");
       }
     </script>
   </body>

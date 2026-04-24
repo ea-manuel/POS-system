@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://js.paystack.co/v2/inline.js"></script>
     <title>Checkout - POS System</title>
     <style>
       * {
@@ -307,7 +308,142 @@
       .btn-back:hover {
         background: #1a1ac0;
       }
+
+      /* Custom Modal Styles */
+      .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .custom-modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .custom-modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+      .custom-modal-overlay.show .custom-modal-content {
+        transform: scale(1);
+      }
+      .custom-modal-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+      .custom-modal-content h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 20px;
+      }
+      .custom-modal-content p {
+        margin: 0 0 25px 0;
+        color: #666;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .custom-modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      .custom-modal-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .custom-modal-btn.primary {
+        background: #2f2ee9;
+        color: white;
+      }
+      .custom-modal-btn.primary:hover {
+        background: #1a1ac0;
+      }
+      .custom-modal-btn.secondary {
+        background: #e8e8e8;
+        color: #333;
+      }
+      .custom-modal-btn.secondary:hover {
+        background: #d8d8d8;
+      }
+      .custom-modal-btn.danger {
+        background: #dc3545;
+        color: white;
+      }
+      .custom-modal-btn.danger:hover {
+        background: #c82333;
+      }
+      .custom-modal-btn.success {
+        background: #28a745;
+        color: white;
+      }
+      .custom-modal-btn.success:hover {
+        background: #218838;
+      }
+
+      /* Global Loader Styles */
+      .global-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .global-loader.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .loader-spinner {
+        border: 4px solid #e8e8e8;
+        border-top: 4px solid #2f2ee9;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+      }
+      .global-loader p {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2b2b2f;
+        margin: 0;
+      }
     </style>
+    <script>
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+    </script>
   </head>
   <body>
     <div class="checkout-container">
@@ -321,7 +457,39 @@
       </div>
     </div>
 
+    <!-- Custom Modal -->
+    <div id="customModal" class="custom-modal-overlay">
+      <div class="custom-modal-content">
+        <div id="customModalIcon" class="custom-modal-icon"></div>
+        <h3 id="customModalTitle">Title</h3>
+        <p id="customModalMessage">Message</p>
+        <div class="custom-modal-actions" id="customModalActions"></div>
+      </div>
+    </div>
+
+    <!-- Global Loader -->
+    <div id="globalLoader" class="global-loader">
+      <div class="loader-spinner"></div>
+      <p id="loaderMessage">Loading...</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+      const supabaseUrl = "https://czrfdcarnyesbfgnlums.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6cmZkY2Fybnllc2JmZ25sdW1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDY2ODAsImV4cCI6MjA4ODkyMjY4MH0.trHM_a4BJk3kpid_oi7Exz8T3U7I13mXtRwnLaG3nkY";
+      const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      function showLoader(msg = "Loading...") {
+        const loaderMessage = document.getElementById("loaderMessage");
+        if (loaderMessage) loaderMessage.textContent = msg;
+        document.getElementById("globalLoader").classList.add("show");
+      }
+
+      function hideLoader() {
+        document.getElementById("globalLoader").classList.remove("show");
+      }
+
       // Sample items database matching main.html
       const itemsDatabase = [
         { id: 1, barcode: "001234567890", name: "Apple", price: 1.5 },
@@ -375,8 +543,8 @@
                             <div class="item-barcode">${cartItem.barcode}</div>
                         </td>
                         <td class="item-qty">${cartItem.quantity}</td>
-                        <td class="item-price">$${cartItem.price.toFixed(2)}</td>
-                        <td class="item-subtotal">$${itemPrice}</td>
+                        <td class="item-price">GH₵${cartItem.price.toFixed(2)}</td>
+                        <td class="item-subtotal">GH₵${itemPrice}</td>
                     </tr>
                 `;
         });
@@ -394,15 +562,15 @@
                         <h3>Order Summary</h3>
                         <div class="summary-row">
                             <span>Subtotal:</span>
-                            <strong>$${subtotal.toFixed(2)}</strong>
+                            <strong>GH₵${subtotal.toFixed(2)}</strong>
                         </div>
                         <div class="summary-row">
                             <span>Tax (10%):</span>
-                            <strong>$${tax.toFixed(2)}</strong>
+                            <strong>GH₵${tax.toFixed(2)}</strong>
                         </div>
                         <div class="summary-row total">
                             <span>Total:</span>
-                            <strong>$${total.toFixed(2)}</strong>
+                            <strong>GH₵${total.toFixed(2)}</strong>
                         </div>
             `;
 
@@ -411,8 +579,8 @@
           const statusClass = total > budget ? "exceeded" : "ok";
           sidebarHTML += `
                     <div class="budget-info">
-                        <strong>Budget:</strong> $${budget.toFixed(2)}<br>
-                        <strong>Remaining:</strong> $${remaining}
+                        <strong>Budget:</strong> GH₵${budget.toFixed(2)}<br>
+                        <strong>Remaining:</strong> GH₵${remaining}
                     </div>
                 `;
         }
@@ -425,11 +593,11 @@
                         <div class="payment-options">
                             <div class="payment-option">
                                 <input type="radio" id="cash" name="payment" value="cash" checked>
-                                <label for="cash">Cash</label>
+                            <label for="cash">Cash (Physical)</label>
                             </div>
                             <div class="payment-option">
                                 <input type="radio" id="card" name="payment" value="card">
-                                <label for="card">Credit/Debit Card</label>
+                            <label for="card">Paystack (Card / Mobile Money)</label>
                             </div>
                         </div>
                         <div class="action-buttons">
@@ -442,6 +610,111 @@
 
         document.getElementById("checkoutContent").innerHTML =
           itemsHTML + sidebarHTML;
+      }
+
+      const paystack = new PaystackPop();
+
+      function payWithPaystack() {
+        const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
+        const totalAmount = checkoutData.total; // e.g., 50.50
+
+        // Try to fetch email from currently logged in user
+        client.auth.getUser().then(({ data: { user } }) => {
+          const userEmail = user?.email || "customer@retailhub.com";
+
+          paystack.newTransaction({
+            key: "pk_live_7b5ce5b8f610da677c13c4641de2a9285705e158", // Replace with actual key
+            email: userEmail,
+            amount: Math.round(totalAmount * 100), // Paystack uses Pesewas/Kobo
+            currency: "GHS",
+            onSuccess: (transaction) => {
+              console.log(
+                "Payment Successful! Reference:",
+                transaction.reference,
+              );
+              processSupabaseSale("paystack", transaction.reference);
+            },
+            onCancel: () => {
+              showCustomModal({
+                title: "Payment Cancelled",
+                message: "Payment Cancelled by user.",
+                type: "warning",
+              });
+            },
+          });
+        });
+      }
+
+      async function processSupabaseSale(paymentMethod, reference) {
+        showLoader("Processing transaction...");
+
+        try {
+          const {
+            data: { user },
+            error: userError,
+          } = await client.auth.getUser();
+          if (userError || !user)
+            throw new Error("No active cashier session found!");
+
+          const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
+
+          const saleData = {
+            total_amount: checkoutData.total,
+            items: checkoutData.items,
+            cashier_id: user.id,
+          };
+
+          const { data: saleResult, error } = await client
+            .from("sales")
+            .insert([saleData])
+            .select();
+          if (error) throw error;
+
+          // --- Deduct Stock from Products ---
+          for (const item of checkoutData.items) {
+            // 1. Get current stock first
+            const { data: product, error: fetchError } = await client
+              .from("Products")
+              .select("stock_quantity")
+              .eq("id", item.id)
+              .single();
+
+            if (!fetchError && product) {
+              // 2. Subtract the quantity sold
+              const newStock = product.stock_quantity - item.quantity;
+              // 3. Update the database
+              const { error: updateError } = await client
+                .from("Products")
+                .update({ stock_quantity: newStock })
+                .eq("id", item.id);
+
+              if (updateError)
+                console.error(
+                  "Stock update failed for",
+                  item.name,
+                  updateError.message,
+                );
+            }
+          }
+
+          // Clean up local cart
+          localStorage.removeItem("checkoutData");
+
+          const saleId =
+            saleResult && saleResult[0] ? saleResult[0].id : "UNKNOWN";
+          const budget = checkoutData.budget || "";
+
+          // Redirect directly to receipt, completely eliminating authorization.html
+          window.location.href = `receipt.html?id=${saleId}&method=${paymentMethod}&ref=${reference || ""}&budget=${budget}`;
+        } catch (err) {
+          hideLoader();
+          console.error("System error:", err);
+          showCustomModal({
+            title: "Transaction Failed",
+            message: err.message,
+            type: "error",
+          });
+        }
       }
 
       function showEmptyState() {
@@ -457,24 +730,74 @@
         const selectedPayment = document.querySelector(
           'input[name="payment"]:checked',
         ).value;
-        const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
 
-        // Save payment method and checkout data for payment page
-        localStorage.setItem("paymentMethod", selectedPayment);
-        localStorage.setItem("checkoutData", JSON.stringify(checkoutData));
-
-        // Redirect to payment page
-        window.location.href = "payment.html";
+        if (selectedPayment === "card") {
+          payWithPaystack();
+        } else {
+          // Process Cash immediately
+          processSupabaseSale("cash", "CASH-" + Date.now());
+        }
       }
 
       function goBack() {
-        if (
-          confirm(
+        showCustomModal({
+          title: "Cancel Order",
+          message:
             "Are you sure? This will return to the POS without completing the order.",
-          )
-        ) {
-          window.location.href = "main.html";
+          type: "confirm",
+          onConfirm: () => {
+            window.location.href = "main.html";
+          },
+        });
+      }
+
+      function showCustomModal({
+        title,
+        message,
+        type = "info",
+        confirmText = "OK",
+        cancelText = "Cancel",
+        onConfirm = null,
+      }) {
+        const modal = document.getElementById("customModal");
+        document.getElementById("customModalTitle").textContent = title;
+        document.getElementById("customModalMessage").textContent = message;
+
+        let icon = "ℹ️",
+          confirmClass = "primary";
+        if (type === "success") {
+          icon = "✅";
+          confirmClass = "success";
+        } else if (type === "error") {
+          icon = "❌";
+          confirmClass = "danger";
+        } else if (type === "warning" || type === "confirm") {
+          icon = "⚠️";
+          confirmClass = "primary";
         }
+
+        document.getElementById("customModalIcon").textContent = icon;
+        const actionsEl = document.getElementById("customModalActions");
+        actionsEl.innerHTML = "";
+
+        if (type === "confirm") {
+          const cancelBtn = document.createElement("button");
+          cancelBtn.className = "custom-modal-btn secondary";
+          cancelBtn.textContent = cancelText;
+          cancelBtn.onclick = () => modal.classList.remove("show");
+          actionsEl.appendChild(cancelBtn);
+        }
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.className = `custom-modal-btn ${confirmClass}`;
+        confirmBtn.textContent = confirmText;
+        confirmBtn.onclick = () => {
+          modal.classList.remove("show");
+          if (onConfirm) onConfirm();
+        };
+        actionsEl.appendChild(confirmBtn);
+
+        modal.classList.add("show");
       }
 
       // Load checkout on page load

@@ -270,6 +270,98 @@
         text-decoration: underline;
       }
 
+      /* Custom Modal Styles */
+      .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .custom-modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .custom-modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+      .custom-modal-overlay.show .custom-modal-content {
+        transform: scale(1);
+      }
+      .custom-modal-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+      .custom-modal-content h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 20px;
+      }
+      .custom-modal-content p {
+        margin: 0 0 25px 0;
+        color: #666;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .custom-modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      .custom-modal-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .custom-modal-btn.primary {
+        background: #2f2ee9;
+        color: white;
+      }
+      .custom-modal-btn.primary:hover {
+        background: #1a1ac0;
+      }
+      .custom-modal-btn.secondary {
+        background: #e8e8e8;
+        color: #333;
+      }
+      .custom-modal-btn.secondary:hover {
+        background: #d8d8d8;
+      }
+      .custom-modal-btn.danger {
+        background: #dc3545;
+        color: white;
+      }
+      .custom-modal-btn.danger:hover {
+        background: #c82333;
+      }
+      .custom-modal-btn.success {
+        background: #28a745;
+        color: white;
+      }
+      .custom-modal-btn.success:hover {
+        background: #218838;
+      }
+
       @media (max-width: 480px) {
         .payment-container {
           padding: 25px 20px;
@@ -284,8 +376,23 @@
         }
       }
     </style>
+    <script>
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+    </script>
   </head>
   <body>
+    <!-- Custom Modal -->
+    <div id="customModal" class="custom-modal-overlay">
+      <div class="custom-modal-content">
+        <div id="customModalIcon" class="custom-modal-icon"></div>
+        <h3 id="customModalTitle">Title</h3>
+        <p id="customModalMessage">Message</p>
+        <div class="custom-modal-actions" id="customModalActions"></div>
+      </div>
+    </div>
+
     <div class="payment-container">
       <button class="back-btn" onclick="goBack()">← Back to Checkout</button>
 
@@ -296,7 +403,7 @@
 
       <div class="amount-display">
         <div class="label">Order Total</div>
-        <div class="amount" id="totalAmount">$0.00</div>
+        <div class="amount" id="totalAmount">GH₵0.00</div>
       </div>
 
       <!-- Cash Payment Section -->
@@ -483,7 +590,7 @@
         // Display total amount
         const total = checkoutData?.total || 0;
         document.getElementById("totalAmount").textContent =
-          "$" + total.toFixed(2);
+          "GH₵" + total.toFixed(2);
 
         // Show appropriate payment section
         if (paymentMethod === "cash") {
@@ -653,9 +760,63 @@
       }
 
       function goBack() {
-        if (confirm("Are you sure? You will return to checkout.")) {
-          window.location.href = "checkout.html";
+        showCustomModal({
+          title: "Go Back",
+          message: "Are you sure? You will return to checkout.",
+          type: "confirm",
+          onConfirm: () => {
+            window.location.href = "checkout.html";
+          },
+        });
+      }
+
+      function showCustomModal({
+        title,
+        message,
+        type = "info",
+        confirmText = "OK",
+        cancelText = "Cancel",
+        onConfirm = null,
+      }) {
+        const modal = document.getElementById("customModal");
+        document.getElementById("customModalTitle").textContent = title;
+        document.getElementById("customModalMessage").textContent = message;
+
+        let icon = "ℹ️",
+          confirmClass = "primary";
+        if (type === "success") {
+          icon = "✅";
+          confirmClass = "success";
+        } else if (type === "error") {
+          icon = "❌";
+          confirmClass = "danger";
+        } else if (type === "warning" || type === "confirm") {
+          icon = "⚠️";
+          confirmClass = "primary";
         }
+
+        document.getElementById("customModalIcon").textContent = icon;
+        const actionsEl = document.getElementById("customModalActions");
+        actionsEl.innerHTML = "";
+
+        if (type === "confirm") {
+          const cancelBtn = document.createElement("button");
+          cancelBtn.className = "custom-modal-btn secondary";
+          cancelBtn.textContent = cancelText;
+          cancelBtn.onclick = () => modal.classList.remove("show");
+          actionsEl.appendChild(cancelBtn);
+        }
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.className = `custom-modal-btn ${confirmClass}`;
+        confirmBtn.textContent = confirmText;
+        confirmBtn.onclick = () => {
+          modal.classList.remove("show");
+          if (onConfirm) onConfirm();
+        };
+        actionsEl.appendChild(confirmBtn);
+
+        modal.classList.add("show");
       }
 
       // Initialize on page load

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script src="https://js.paystack.co/v2/inline.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>POS - Cashier Terminal</title>
@@ -780,7 +781,53 @@
       .modal-btn.cancel:hover {
         background: #5a6268;
       }
+
+      /* Global Loader Styles */
+      .global-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .global-loader.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .loader-spinner {
+        border: 4px solid #e8e8e8;
+        border-top: 4px solid #2f2ee9;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+      }
+      .global-loader p {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2b2b2f;
+        margin: 0;
+      }
     </style>
+    <script>
+      // Instantly hide the page to prevent a flash of unauthenticated content
+      document.documentElement.style.visibility = "hidden";
+      // Quick synchronous check
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+    </script>
   </head>
   <body>
     <div class="main">
@@ -789,7 +836,7 @@
         <!-- LEFT: BUDGET CONTROL -->
         <div class="header-left">
           <div class="budget-control">
-            <label for="budgetInput">Budget Limit ($)</label>
+            <label for="budgetInput">Budget limit (GH₵)</label>
             <div class="budget-input-wrapper">
               <input
                 type="number"
@@ -901,15 +948,15 @@
           </div>
           <div class="total-row">
             <span class="total-label">Subtotal:</span>
-            <span class="total-value" id="subtotal">$0.00</span>
+            <span class="total-value" id="subtotal">GH₵0.00</span>
           </div>
           <div class="total-row">
             <span class="total-label">Tax (10%):</span>
-            <span class="total-value" id="tax">$0.00</span>
+            <span class="total-value" id="tax">GH₵0.00</span>
           </div>
           <div class="total-row grand-total">
             <span class="total-label">Total:</span>
-            <span class="total-value" id="total">$0.00</span>
+            <span class="total-value" id="total">GH₵0.00</span>
           </div>
           <div
             id="budgetStatus"
@@ -964,6 +1011,12 @@
       </div>
     </div>
 
+    <!-- Global Loader -->
+    <div id="globalLoader" class="global-loader">
+      <div class="loader-spinner"></div>
+      <p id="loaderMessage">Loading...</p>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
@@ -973,7 +1026,19 @@
 
       // Use window.supabase to be 100% sure it finds the library
       const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+      function showLoader(msg = "Loading...") {
+        const loaderMessage = document.getElementById("loaderMessage");
+        if (loaderMessage) loaderMessage.textContent = msg;
+        document.getElementById("globalLoader").classList.add("show");
+      }
+
+      function hideLoader() {
+        document.getElementById("globalLoader").classList.remove("show");
+      }
+
       async function loadUser() {
+        showLoader("Starting terminal...");
         // Use 'client' or whatever name you gave your supabase.createClient
         const {
           data: { user },
@@ -995,6 +1060,10 @@
           }
 
           console.log("Logged in as:", fullName);
+
+          // Reveal page content once authenticated
+          document.documentElement.style.visibility = "";
+          hideLoader();
         } else {
           // 4. Security: If someone tries to type main.html without logging in,
           // kick them back to the login screen.
@@ -1121,7 +1190,7 @@
             (item) => `
           <div class="suggestion-item" onclick="selectSuggestion(${item.id})">
             <span class="suggestion-item-name">${item.name}</span>
-            <span class="suggestion-item-price">Barcode: ${item.barcode} | $${parseFloat(item.price).toFixed(2)}</span>
+            <span class="suggestion-item-price">Barcode: ${item.barcode} | GH₵${parseFloat(item.price).toFixed(2)}</span>
           </div>
         `,
           )
@@ -1136,6 +1205,7 @@
 
       // Select item from dropdown and add to cart
       async function selectSuggestion(itemId) {
+        showLoader("Adding item...");
         const { data: item, error } = await client
           .from("Products")
           .select("*")
@@ -1143,6 +1213,7 @@
           .single();
 
         if (error || !item) {
+          hideLoader();
           showNotification(`Error adding item to cart`, "error");
           return;
         }
@@ -1151,6 +1222,7 @@
         const existingItem = cart.find((c) => c.id === item.id);
         if (existingItem) {
           if (existingItem.quantity >= item.stock_quantity) {
+            hideLoader();
             showNotification(
               `Cannot add more ${item.name}. Only ${item.stock_quantity} in stock.`,
               "error",
@@ -1160,12 +1232,14 @@
           existingItem.quantity++;
         } else {
           if (item.stock_quantity <= 0) {
+            hideLoader();
             showNotification(`${item.name} is out of stock.`, "error");
             return;
           }
           cart.push({ ...item, quantity: 1 });
         }
 
+        hideLoader();
         showNotification(`Added ${item.name} to cart`, "success");
         document.getElementById("searchInput").value = "";
         hideSuggestions();
@@ -1176,6 +1250,7 @@
 
       // ADD ITEM BY SEARCH OR BARCODE - Fetches from Supabase
       async function addItemBySearchOrBarcode(query) {
+        showLoader("Searching inventory...");
         // 1. Smart Query: Search for EXACT barcode OR a name that contains the text
         const { data: item, error } = await client
           .from("Products")
@@ -1185,11 +1260,13 @@
           .maybeSingle();
 
         if (error) {
+          hideLoader();
           console.error("Database error:", error);
           return;
         }
 
         if (!item) {
+          hideLoader();
           showNotification(`No product found for: "${query}"`, "error");
           return;
         }
@@ -1198,6 +1275,7 @@
         const existingItem = cart.find((c) => c.id === item.id);
         if (existingItem) {
           if (existingItem.quantity >= item.stock_quantity) {
+            hideLoader();
             showNotification(
               `Cannot add more ${item.name}. Only ${item.stock_quantity} in stock.`,
               "error",
@@ -1207,6 +1285,7 @@
           existingItem.quantity++;
         } else {
           if (item.stock_quantity <= 0) {
+            hideLoader();
             showNotification(`${item.name} is out of stock.`, "error");
             return;
           }
@@ -1214,6 +1293,7 @@
           cart.push({ ...item, quantity: 1 });
         }
 
+        hideLoader();
         showNotification(`Added ${item.name} to cart`, "success");
         renderCart();
         updateTotals();
@@ -1255,7 +1335,7 @@
                                 <tr>
                                     <td><div class="item-name">${item.name}</div></td>
                                     <td><div class="item-barcode">${item.barcode}</div></td>
-                                    <td class="price-col">$${item.price.toFixed(2)}</td>
+                                    <td class="price-col">GH₵${item.price.toFixed(2)}</td>
                                     <td class="stock-col">${item.stock_quantity}</td>
                                     <td>
                                         <input 
@@ -1267,7 +1347,7 @@
                                             onchange="updateQuantity(${item.id}, this.value)"
                                         >
                                     </td>
-                                    <td class="price-col">$${(item.price * item.quantity).toFixed(2)}</td>
+                                    <td class="price-col">GH₵${(item.price * item.quantity).toFixed(2)}</td>
                                     <td>
                                         <button class="remove-btn" onclick="removeItem(${item.id})">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1331,9 +1411,9 @@
 
         document.getElementById("itemsCount").textContent = itemsCount;
         document.getElementById("subtotal").textContent =
-          `$${subtotal.toFixed(2)}`;
-        document.getElementById("tax").textContent = `$${tax.toFixed(2)}`;
-        document.getElementById("total").textContent = `$${total.toFixed(2)}`;
+          `GH₵${subtotal.toFixed(2)}`;
+        document.getElementById("tax").textContent = `GH₵${tax.toFixed(2)}`;
+        document.getElementById("total").textContent = `GH₵${total.toFixed(2)}`;
       }
 
       // UPDATE BUDGET STATUS
@@ -1353,11 +1433,11 @@
         const percentage = (total / budget) * 100;
 
         if (total > budget) {
-          statusDiv.innerHTML = `BUDGET EXCEEDED by $${(total - budget).toFixed(2)}`;
+          statusDiv.innerHTML = `BUDGET EXCEEDED by GH₵${(total - budget).toFixed(2)}`;
           statusDiv.className = "budget-status-indicator exceeded";
           document.getElementById("checkoutBtn").disabled = true;
           showNotification(
-            `Budget exceeded by $${(total - budget).toFixed(2)}`,
+            `Budget exceeded by GH₵${(total - budget).toFixed(2)}`,
             "error",
           );
         } else if (percentage >= 80) {
@@ -1365,7 +1445,7 @@
           statusDiv.className = "budget-status-indicator warning";
           document.getElementById("checkoutBtn").disabled = false;
         } else {
-          statusDiv.innerHTML = `Within budget - $${remaining.toFixed(2)} remaining`;
+          statusDiv.innerHTML = `Within budget - GH₵${remaining.toFixed(2)} remaining`;
           statusDiv.className = "budget-status-indicator";
           document.getElementById("checkoutBtn").disabled = false;
         }

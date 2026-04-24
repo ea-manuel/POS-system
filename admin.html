@@ -415,7 +415,387 @@
         color: #2f2ee9;
         font-weight: 700;
       }
+
+      .staff-form {
+        display: none;
+        margin-bottom: 24px;
+        padding: 20px;
+        border: 1px solid #e8e8e8;
+        border-radius: 10px;
+        background: #fafbff;
+      }
+
+      .staff-form h3 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #2b2b2f;
+      }
+
+      .staff-form .field {
+        margin-bottom: 14px;
+      }
+
+      .staff-form .field label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 6px;
+      }
+
+      .staff-form .field input,
+      .staff-form .field select {
+        width: 100%;
+        max-width: 420px;
+        padding: 10px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+
+      .staff-form .field input:focus,
+      .staff-form .field select:focus {
+        outline: none;
+        border-color: #2f2ee9;
+        box-shadow: 0 0 0 3px rgba(47, 46, 233, 0.12);
+      }
+
+      .staff-form .field-hint {
+        font-size: 12px;
+        color: #888;
+        margin-top: 4px;
+        max-width: 420px;
+      }
+
+      .staff-form-actions {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .btn-admin-primary {
+        padding: 10px 15px;
+        background: #2f2ee9;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .btn-admin-primary:hover {
+        background: #2524c7;
+      }
+
+      .btn-admin-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .role-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .role-badge.admin {
+        background: #e8eaf6;
+        color: #1976d2;
+      }
+      .role-badge.cashier {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .role-badge.manager {
+        background: #fff3e0;
+        color: #f57c00;
+      }
+      .role-badge.unknown {
+        background: #f5f5f5;
+        color: #616161;
+      }
+
+      .btn-admin-success {
+        padding: 10px 15px;
+        background: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .btn-admin-danger {
+        padding: 10px 15px;
+        background: #f44336;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      /* Custom Modal Styles */
+      .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .custom-modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .custom-modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+      .custom-modal-overlay.show .custom-modal-content {
+        transform: scale(1);
+      }
+      .custom-modal-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+      .custom-modal-content h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 20px;
+      }
+      .custom-modal-content p {
+        margin: 0 0 25px 0;
+        color: #666;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .custom-modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      .custom-modal-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .custom-modal-btn.primary {
+        background: #2f2ee9;
+        color: white;
+      }
+      .custom-modal-btn.primary:hover {
+        background: #1a1ac0;
+      }
+      .custom-modal-btn.secondary {
+        background: #e8e8e8;
+        color: #333;
+      }
+      .custom-modal-btn.secondary:hover {
+        background: #d8d8d8;
+      }
+      .custom-modal-btn.danger {
+        background: #dc3545;
+        color: white;
+      }
+      .custom-modal-btn.danger:hover {
+        background: #c82333;
+      }
+      .custom-modal-btn.success {
+        background: #28a745;
+        color: white;
+      }
+      .custom-modal-btn.success:hover {
+        background: #218838;
+      }
+
+      /* Global Loader Styles */
+      .global-loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .global-loader.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .loader-spinner {
+        border: 4px solid #e8e8e8;
+        border-top: 4px solid #2f2ee9;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 15px;
+      }
+      .global-loader p {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2b2b2f;
+        margin: 0;
+      }
+
+      /* Dark Mode Styles */
+      body.dark-mode {
+        background: #121212;
+        color: #e0e0e0;
+      }
+      body.dark-mode .sidebar {
+        background: #1e1e1e;
+        border-color: #333;
+      }
+      body.dark-mode .sidebar-title,
+      body.dark-mode .sidebar-menu a {
+        color: #e0e0e0;
+      }
+      body.dark-mode .sidebar-menu a:hover,
+      body.dark-mode .sidebar-menu a.active {
+        background: #2a2a35;
+      }
+      body.dark-mode .header h1,
+      body.dark-mode .date-time div:first-child,
+      body.dark-mode .section-header h2,
+      body.dark-mode .stat-value,
+      body.dark-mode .transaction-user,
+      body.dark-mode .employee-name,
+      body.dark-mode .staff-form h3,
+      body.dark-mode #addItemForm h3,
+      body.dark-mode #editItemForm h3 {
+        color: #f5f5f5;
+      }
+      body.dark-mode .stat-card,
+      body.dark-mode .section-card,
+      body.dark-mode #addItemForm,
+      body.dark-mode #editItemForm,
+      body.dark-mode .staff-form {
+        background: #1e1e1e;
+        border-color: #333;
+      }
+      body.dark-mode .section-header,
+      body.dark-mode .transaction-item,
+      body.dark-mode .employee-item,
+      body.dark-mode .settings-row {
+        border-color: #333 !important;
+      }
+      body.dark-mode .inventory-table th {
+        background: #2c2c2c;
+        color: #e0e0e0;
+        border-color: #444;
+      }
+      body.dark-mode .inventory-table td {
+        border-color: #444;
+      }
+      body.dark-mode .inventory-table tr:nth-child(even) {
+        background: #252525;
+      }
+      body.dark-mode input,
+      body.dark-mode select {
+        background: #333;
+        color: #e0e0e0;
+        border-color: #555;
+      }
+      body.dark-mode .custom-modal-content {
+        background: #1e1e1e;
+      }
+      body.dark-mode .global-loader {
+        background: rgba(18, 18, 18, 0.85);
+      }
+      body.dark-mode .global-loader p {
+        color: #e0e0e0;
+      }
+      body.dark-mode .loader-spinner {
+        border-color: #333;
+        border-top-color: #2f2ee9;
+      }
+
+      /* Toggle Switch */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        border-radius: 24px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: #2f2ee9;
+      }
+      input:checked + .slider:before {
+        transform: translateX(20px);
+      }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Instantly hide the page to prevent a flash of unauthenticated content
+      document.documentElement.style.visibility = "hidden";
+      // Quick synchronous check
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+    </script>
   </head>
   <body>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -434,7 +814,17 @@
 
         if (error || !user || role !== "admin") {
           window.location.href = "index.html";
+          return;
         }
+
+        const displayName = user.user_metadata?.display_name || "Admin";
+        const nameEl = document.getElementById("adminDisplayName");
+        if (nameEl) {
+          nameEl.textContent = displayName;
+        }
+
+        // Reveal page content once authenticated
+        document.documentElement.style.visibility = "";
       }
 
       ensureAdmin();
@@ -442,7 +832,7 @@
     <div class="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-icon">🛒</div>
-        <div class="sidebar-title">Admin</div>
+        <div class="sidebar-title" id="adminDisplayName">Admin</div>
       </div>
 
       <ul class="sidebar-menu">
@@ -504,23 +894,23 @@
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-label">Today's Sales</div>
-            <div class="stat-value">$2,450.00</div>
-            <div class="stat-change">↑ 12% from yesterday</div>
+            <div class="stat-value" id="statTodaySales">GH₵...</div>
+            <div class="stat-change">Today's total revenue</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Total Transactions</div>
-            <div class="stat-value">142</div>
-            <div class="stat-change">↑ 8 more than yesterday</div>
+            <div class="stat-value" id="statTotalTrans">...</div>
+            <div class="stat-change">Transactions today</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Active Employees</div>
-            <div class="stat-value">8</div>
-            <div class="stat-change">All present today</div>
+            <div class="stat-value" id="statActiveEmp">...</div>
+            <div class="stat-change">Registered in system</div>
           </div>
           <div class="stat-card">
             <div class="stat-label">Avg Transaction</div>
-            <div class="stat-value">$17.25</div>
-            <div class="stat-change">↓ 2% from yesterday</div>
+            <div class="stat-value" id="statAvgTrans">GH₵...</div>
+            <div class="stat-change">Average order value today</div>
           </div>
         </div>
 
@@ -529,37 +919,10 @@
             <div class="section-header">
               <h2>Recent Transactions</h2>
             </div>
-            <div class="section-body">
-              <div class="transaction-item">
-                <div class="transaction-info">
-                  <div class="transaction-user">John Smith</div>
-                  <div class="transaction-time">10:45 AM - Order #4521</div>
-                </div>
-                <div style="text-align: right">
-                  <div class="transaction-amount">$45.99</div>
-                  <span class="transaction-status completed">Completed</span>
-                </div>
-              </div>
-              <div class="transaction-item">
-                <div class="transaction-info">
-                  <div class="transaction-user">Sarah Johnson</div>
-                  <div class="transaction-time">10:30 AM - Order #4520</div>
-                </div>
-                <div style="text-align: right">
-                  <div class="transaction-amount">$32.50</div>
-                  <span class="transaction-status completed">Completed</span>
-                </div>
-              </div>
-              <div class="transaction-item">
-                <div class="transaction-info">
-                  <div class="transaction-user">Mike Chen</div>
-                  <div class="transaction-time">10:15 AM - Order #4519</div>
-                </div>
-                <div style="text-align: right">
-                  <div class="transaction-amount">$67.25</div>
-                  <span class="transaction-status completed">Completed</span>
-                </div>
-              </div>
+            <div class="section-body" id="recentTransactionsDash">
+              <p style="color: #888; font-size: 13px">
+                Loading recent transactions...
+              </p>
             </div>
           </div>
 
@@ -567,37 +930,10 @@
             <div class="section-header">
               <h2>Top Performers</h2>
             </div>
-            <div class="section-body">
-              <div class="employee-item">
-                <div class="employee-info">
-                  <div class="employee-name">Sarah Johnson</div>
-                  <div class="employee-role">Cashier - Station 2</div>
-                </div>
-                <div class="employee-sales">
-                  <div class="employee-sales-value">$1,245.50</div>
-                  <div class="employee-sales-count">38 sales today</div>
-                </div>
-              </div>
-              <div class="employee-item">
-                <div class="employee-info">
-                  <div class="employee-name">John Smith</div>
-                  <div class="employee-role">Cashier - Station 1</div>
-                </div>
-                <div class="employee-sales">
-                  <div class="employee-sales-value">$892.75</div>
-                  <div class="employee-sales-count">32 sales today</div>
-                </div>
-              </div>
-              <div class="employee-item">
-                <div class="employee-info">
-                  <div class="employee-name">Mike Chen</div>
-                  <div class="employee-role">Cashier - Station 3</div>
-                </div>
-                <div class="employee-sales">
-                  <div class="employee-sales-value">$758.25</div>
-                  <div class="employee-sales-count">28 sales today</div>
-                </div>
-              </div>
+            <div class="section-body" id="topPerformersDash">
+              <p style="color: #888; font-size: 13px">
+                Loading top performers...
+              </p>
             </div>
           </div>
         </div>
@@ -609,7 +945,7 @@
           <div class="section-header">
             <h2>All Transactions</h2>
           </div>
-          <div class="section-body">
+          <div class="section-body" id="transactionsContainer">
             <p
               style="
                 color: #888;
@@ -618,7 +954,7 @@
                 padding: 40px 0;
               "
             >
-              Complete transaction history and detailed reports coming soon.
+              Loading transactions...
             </p>
           </div>
         </div>
@@ -629,24 +965,149 @@
         <div class="section-card">
           <div class="section-header">
             <h2>Employee Management</h2>
+            <button type="button" id="addStaffBtn" class="btn-admin-primary">
+              Add New Employee
+            </button>
           </div>
           <div class="section-body">
-            <p
-              style="
-                color: #888;
-                font-size: 14px;
-                text-align: center;
-                padding: 40px 0;
-              "
-            >
-              Employee management and scheduling features coming soon.
-            </p>
+            <div id="addStaffForm" class="staff-form">
+              <h3>Register new staff</h3>
+              <form
+                id="staffRegisterForm"
+                onsubmit="
+                  event.preventDefault();
+                  registerNewStaff();
+                "
+              >
+                <div class="field">
+                  <label for="staffName">Full name</label>
+                  <input
+                    type="text"
+                    id="staffName"
+                    name="staffName"
+                    autocomplete="name"
+                    required
+                    placeholder="e.g. Ama Mensah"
+                  />
+                </div>
+                <div class="field">
+                  <label for="staffEmail">Email</label>
+                  <input
+                    type="email"
+                    id="staffEmail"
+                    name="staffEmail"
+                    autocomplete="email"
+                    required
+                    placeholder="staff@yourstore.com"
+                  />
+                  <p class="field-hint">
+                    Used for Supabase Auth. Cashiers can also use an ID-style
+                    address (e.g. 10042@retailhub.com) if that matches your
+                    login setup. address (e.g. 10042@retailhub.com) if that
+                    matches your login setup.
+                  </p>
+                </div>
+                <div class="field">
+                  <label for="staffPassword">Temporary password</label>
+                  <input
+                    type="password"
+                    id="staffPassword"
+                    name="staffPassword"
+                    autocomplete="new-password"
+                    required
+                    minlength="6"
+                    placeholder="At least 6 characters"
+                  />
+                </div>
+                <div class="field">
+                  <label for="staffRole">Role</label>
+                  <select id="staffRole" name="staffRole" required>
+                    <option value="cashier" selected>Cashier</option>
+                    <option value="manager">Manager</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div class="staff-form-actions">
+                  <button
+                    type="submit"
+                    id="registerStaffSubmitBtn"
+                    class="btn-admin-success"
+                  >
+                    Register staff
+                  </button>
+                  <button
+                    type="button"
+                    id="cancelStaffBtn"
+                    class="btn-admin-danger"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+            <div id="employeesContainer">
+              <h3
+                style="
+                  font-size: 14px;
+                  font-weight: 600;
+                  margin-bottom: 12px;
+                  color: #444;
+                "
+              >
+                Staff directory
+              </h3>
+              <table class="inventory-table">
+                <thead>
+                  <tr>
+                    <th>Name & Activity</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Total Revenue</th>
+                  </tr>
+                </thead>
+                <tbody id="staffTableBody">
+                  <tr>
+                    <td
+                      colspan="4"
+                      style="text-align: center; color: #888; padding: 40px 0"
+                    >
+                      Loading employees…
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Inventory Tab -->
       <div id="inventory-tab" class="tab-content" style="display: none">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Products</div>
+            <div class="stat-value" id="statTotalProducts">...</div>
+            <div class="stat-change">Unique items in system</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Stock</div>
+            <div class="stat-value" id="statTotalStock">...</div>
+            <div class="stat-change">Total units available</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Low Stock Alerts</div>
+            <div class="stat-value" id="statLowStock" style="color: #f44336">
+              ...
+            </div>
+            <div class="stat-change negative">Items with 5 or fewer units</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Expected Revenue</div>
+            <div class="stat-value" id="statExpectedRevenue">GH₵...</div>
+            <div class="stat-change">Value of current inventory</div>
+          </div>
+        </div>
+
         <div class="section-card">
           <div class="section-header">
             <h2>Inventory Management</h2>
@@ -730,6 +1191,72 @@
                 Cancel
               </button>
             </div>
+
+            <div
+              id="editItemForm"
+              style="
+                display: none;
+                margin-top: 20px;
+                padding: 20px;
+                border: 1px solid #e8e8e8;
+                border-radius: 10px;
+                background: white;
+              "
+            >
+              <h3>Edit Item</h3>
+              <label style="color: #888; font-size: 13px"
+                >ID: <span id="editItemIdDisplay"></span></label
+              ><br /><br />
+              <label
+                >Name: <input type="text" id="editItemName" required /></label
+              ><br /><br />
+              <label
+                >Stock Quantity:
+                <input type="number" id="editItemStock" required /></label
+              ><br /><br />
+              <label
+                >Price:
+                <input
+                  type="number"
+                  step="0.01"
+                  id="editItemPrice"
+                  required /></label
+              ><br /><br />
+              <label
+                >Category:
+                <input
+                  type="text"
+                  id="editItemCategory"
+                  list="categoryList" /></label
+              ><br /><br />
+              <button
+                id="saveEditBtn"
+                style="
+                  padding: 10px 15px;
+                  background: #4caf50;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                "
+              >
+                Save Changes
+              </button>
+              <button
+                id="cancelEditBtn"
+                style="
+                  padding: 10px 15px;
+                  background: #f44336;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  margin-left: 10px;
+                "
+              >
+                Cancel
+              </button>
+            </div>
             <input type="text" id="barcodeInput" style="display: none" />
             <div id="inventoryContainer">
               <p
@@ -749,21 +1276,22 @@
 
       <!-- Reports Tab -->
       <div id="reports-tab" class="tab-content" style="display: none">
-        <div class="section-card">
-          <div class="section-header">
-            <h2>Sales Reports</h2>
+        <div class="content-grid">
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Revenue Over Time</h2>
+            </div>
+            <div class="section-body" style="position: relative; height: 300px">
+              <canvas id="revenueChart"></canvas>
+            </div>
           </div>
-          <div class="section-body">
-            <p
-              style="
-                color: #888;
-                font-size: 14px;
-                text-align: center;
-                padding: 40px 0;
-              "
-            >
-              Detailed sales analytics and reports coming soon.
-            </p>
+          <div class="section-card">
+            <div class="section-header">
+              <h2>Top Selling Items</h2>
+            </div>
+            <div class="section-body" style="position: relative; height: 300px">
+              <canvas id="itemsChart"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -775,25 +1303,67 @@
             <h2>System Settings</h2>
           </div>
           <div class="section-body">
-            <p
+            <div
+              class="settings-row"
               style="
-                color: #888;
-                font-size: 14px;
-                text-align: center;
-                padding: 40px 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 0;
+                border-bottom: 1px solid #e8e8e8;
               "
             >
-              System configuration and settings coming soon.
-            </p>
+              <div>
+                <strong style="display: block; margin-bottom: 5px"
+                  >Dark Mode</strong
+                >
+                <span style="font-size: 13px; color: #888"
+                  >Toggle dark theme across the admin portal</span
+                >
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="darkModeToggle" />
+                <span class="slider"></span>
+              </label>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Custom Modal -->
+    <div id="customModal" class="custom-modal-overlay">
+      <div class="custom-modal-content">
+        <div id="customModalIcon" class="custom-modal-icon"></div>
+        <h3 id="customModalTitle">Title</h3>
+        <p id="customModalMessage">Message</p>
+        <div class="custom-modal-actions" id="customModalActions"></div>
+      </div>
+    </div>
+
+    <!-- Global Loader -->
+    <div id="globalLoader" class="global-loader">
+      <div class="loader-spinner"></div>
+      <p id="loaderMessage">Loading...</p>
     </div>
 
     <script>
       let isAddingItem = false;
       let focusInterval;
       let scannedBarcode = "";
+      let revenueChartInstance = null;
+      let itemsChartInstance = null;
+      let allProducts = [];
+      let editingItemId = null;
+
+      function showLoader(msg = "Loading...") {
+        document.getElementById("loaderMessage").textContent = msg;
+        document.getElementById("globalLoader").classList.add("show");
+      }
+
+      function hideLoader() {
+        document.getElementById("globalLoader").classList.remove("show");
+      }
 
       function switchTab(tabName) {
         // Hide all tabs
@@ -815,9 +1385,21 @@
         document.getElementById("pageTitle").textContent =
           titles[tabName] || "Dashboard";
 
+        if (tabName === "dashboard") {
+          loadDashboardStats();
+        }
         // Load inventory when switching to that tab
         if (tabName === "inventory") {
           loadInventory();
+        }
+        if (tabName === "employees") {
+          displayStaffList();
+        }
+        if (tabName === "transactions") {
+          loadTransactions();
+        }
+        if (tabName === "reports") {
+          loadReports();
         }
 
         // Update active menu item
@@ -828,11 +1410,16 @@
       }
 
       function logout() {
-        if (confirm("Are you sure you want to logout?")) {
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("employeeId");
-          window.location.href = "index.html";
-        }
+        showCustomModal({
+          title: "Logout",
+          message: "Are you sure you want to logout?",
+          type: "confirm",
+          onConfirm: () => {
+            localStorage.removeItem("isLoggedIn");
+            localStorage.removeItem("employeeId");
+            window.location.href = "index.html";
+          },
+        });
       }
 
       // Update date and time
@@ -858,6 +1445,7 @@
       document.getElementById("addItemBtn").addEventListener("click", () => {
         isAddingItem = true;
         document.getElementById("addItemForm").style.display = "none";
+        document.getElementById("editItemForm").style.display = "none";
         document.getElementById("barcodeInput").style.display = "block";
         document.getElementById("barcodeInput").value = "";
         document.getElementById("barcodeInput").focus();
@@ -893,7 +1481,11 @@
           const category = document.getElementById("itemCategory").value.trim();
 
           if (!name || isNaN(stock) || isNaN(price)) {
-            alert("Please fill in all required fields correctly.");
+            showCustomModal({
+              title: "Validation Error",
+              message: "Please fill in all required fields correctly.",
+              type: "error",
+            });
             return;
           }
 
@@ -906,17 +1498,26 @@
           });
 
           if (error) {
-            alert("Error adding item: " + error.message);
+            showCustomModal({
+              title: "Error",
+              message: "Error adding item: " + error.message,
+              type: "error",
+            });
             console.error(error);
           } else {
-            alert("Item added successfully!");
-            // Clear form
-            document.getElementById("itemName").value = "";
-            document.getElementById("itemStock").value = "";
-            document.getElementById("itemPrice").value = "";
-            document.getElementById("itemCategory").value = "";
-            document.getElementById("addItemForm").style.display = "none";
-            loadInventory();
+            showCustomModal({
+              title: "Success",
+              message: "Item added successfully!",
+              type: "success",
+              onConfirm: () => {
+                document.getElementById("itemName").value = "";
+                document.getElementById("itemStock").value = "";
+                document.getElementById("itemPrice").value = "";
+                document.getElementById("itemCategory").value = "";
+                document.getElementById("addItemForm").style.display = "none";
+                loadInventory();
+              },
+            });
           }
         });
 
@@ -929,10 +1530,72 @@
         scannedBarcode = "";
       });
 
+      document.getElementById("cancelEditBtn").addEventListener("click", () => {
+        document.getElementById("editItemForm").style.display = "none";
+        editingItemId = null;
+      });
+
+      document
+        .getElementById("saveEditBtn")
+        .addEventListener("click", async () => {
+          if (!editingItemId) return;
+
+          const name = document.getElementById("editItemName").value.trim();
+          const stock = parseInt(
+            document.getElementById("editItemStock").value,
+          );
+          const price = parseFloat(
+            document.getElementById("editItemPrice").value,
+          );
+          const category = document
+            .getElementById("editItemCategory")
+            .value.trim();
+
+          if (!name || isNaN(stock) || isNaN(price)) {
+            showCustomModal({
+              title: "Validation Error",
+              message: "Please fill in all required fields correctly.",
+              type: "error",
+            });
+            return;
+          }
+
+          const { error } = await client
+            .from("Products")
+            .update({
+              name,
+              stock_quantity: stock,
+              price,
+              category: category || null,
+            })
+            .eq("id", editingItemId);
+
+          if (error) {
+            showCustomModal({
+              title: "Error",
+              message: "Error updating item: " + error.message,
+              type: "error",
+            });
+            console.error(error);
+          } else {
+            showCustomModal({
+              title: "Success",
+              message: "Item updated successfully!",
+              type: "success",
+              onConfirm: () => {
+                document.getElementById("editItemForm").style.display = "none";
+                editingItemId = null;
+                loadInventory();
+              },
+            });
+          }
+        });
+
       // Inventory loader
       async function loadInventory() {
+        showLoader("Loading inventory...");
         const container = document.getElementById("inventoryContainer");
-        container.innerHTML = `<p style="color: #888; font-size: 14px; text-align: center; padding: 40px 0;">Loading inventory...</p>`;
+        container.innerHTML = "";
 
         const { data: products, error } = await client
           .from("Products")
@@ -942,13 +1605,43 @@
         if (error) {
           container.innerHTML = `<p style="color: #c00; font-size: 14px; text-align: center; padding: 40px 0;">Error loading inventory.</p>`;
           console.error("Inventory load error:", error);
+          hideLoader();
           return;
         }
 
+        allProducts = products;
+
         if (!products || products.length === 0) {
           container.innerHTML = `<p style="color: #888; font-size: 14px; text-align: center; padding: 40px 0;">No products found.</p>`;
+          document.getElementById("statTotalProducts").textContent = "0";
+          document.getElementById("statTotalStock").textContent = "0";
+          document.getElementById("statLowStock").textContent = "0";
+          document.getElementById("statExpectedRevenue").textContent =
+            "GH₵0.00";
+          hideLoader();
           return;
         }
+
+        // Calculate stats
+        const totalProducts = products.length;
+        const totalStock = products.reduce(
+          (sum, p) => sum + (p.stock_quantity || 0),
+          0,
+        );
+        const lowStock = products.filter(
+          (p) => (p.stock_quantity || 0) <= 5,
+        ).length;
+        const expectedRevenue = products.reduce(
+          (sum, p) => sum + (p.price || 0) * (p.stock_quantity || 0),
+          0,
+        );
+
+        document.getElementById("statTotalProducts").textContent =
+          totalProducts;
+        document.getElementById("statTotalStock").textContent = totalStock;
+        document.getElementById("statLowStock").textContent = lowStock;
+        document.getElementById("statExpectedRevenue").textContent =
+          `GH₵${expectedRevenue.toFixed(2)}`;
 
         // Populate category datalist
         const categories = [
@@ -960,7 +1653,25 @@
           .join("");
 
         container.innerHTML = renderInventoryTable(products);
+        hideLoader();
       }
+
+      window.openEditForm = function (id) {
+        const item = allProducts.find((p) => p.id === id);
+        if (!item) return;
+
+        editingItemId = id;
+        document.getElementById("editItemIdDisplay").textContent = item.id;
+        document.getElementById("editItemName").value = item.name || "";
+        document.getElementById("editItemStock").value =
+          item.stock_quantity || 0;
+        document.getElementById("editItemPrice").value = item.price || 0;
+        document.getElementById("editItemCategory").value = item.category || "";
+
+        document.getElementById("addItemForm").style.display = "none";
+        document.getElementById("barcodeInput").style.display = "none";
+        document.getElementById("editItemForm").style.display = "block";
+      };
 
       function renderInventoryTable(items) {
         return `
@@ -973,6 +1684,7 @@
                 <th>Price</th>
                 <th>Stock</th>
                 <th>Category</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -983,11 +1695,14 @@
                       <td>${item.id}</td>
                       <td>${item.name}</td>
                       <td>${item.barcode || "-"}</td>
-                      <td>$${parseFloat(item.price || 0).toFixed(2)}</td>
+                      <td>GH₵${parseFloat(item.price || 0).toFixed(2)}</td>
                       <td class="${
                         item.stock_quantity <= 5 ? "qty-low" : "qty-ok"
                       }">${item.stock_quantity ?? 0}</td>
                       <td>${item.category || "-"}</td>
+                      <td>
+                        <button class="btn-admin-primary" style="padding: 4px 8px; font-size: 12px;" onclick="openEditForm(${item.id})">Edit</button>
+                      </td>
                     </tr>
                   `,
                 )
@@ -996,6 +1711,563 @@
           </table>
         `;
       }
+
+      function escapeHtml(str) {
+        if (str == null) return "";
+        const div = document.createElement("div");
+        div.textContent = String(str);
+        return div.innerHTML;
+      }
+
+      function clearStaffForm() {
+        document.getElementById("staffName").value = "";
+        document.getElementById("staffEmail").value = "";
+        document.getElementById("staffPassword").value = "";
+        document.getElementById("staffRole").value = "cashier";
+      }
+
+      async function saveToProfiles(userId, email, fullName, role) {
+        const { error } = await client.from("profiles").insert({
+          id: userId,
+          email: email,
+          full_name: fullName,
+          role: role,
+        });
+
+        if (error) {
+          console.error("saveToProfiles:", error);
+          showCustomModal({
+            title: "Warning",
+            message:
+              "Account may have been created, but saving to profiles failed: " +
+              error.message,
+            type: "warning",
+          });
+        }
+      }
+
+      async function registerNewStaff() {
+        const email = document.getElementById("staffEmail").value.trim();
+        const password = document.getElementById("staffPassword").value;
+        const fullName = document.getElementById("staffName").value.trim();
+        const role = document.getElementById("staffRole").value; // 'cashier' or 'admin'
+
+        if (!email || !fullName || !password) {
+          showCustomModal({
+            title: "Validation Error",
+            message: "Please fill in all fields.",
+            type: "error",
+          });
+          return;
+        }
+
+        const submitBtn = document.getElementById("registerStaffSubmitBtn");
+        submitBtn.disabled = true;
+
+        try {
+          // This creates the user in Supabase Auth
+          const { data, error } = await client.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+              data: {
+                display_name: fullName,
+                role: role,
+              },
+            },
+          });
+
+          if (error) {
+            showCustomModal({
+              title: "Error",
+              message: error.message,
+              type: "error",
+            });
+          } else {
+            if (data.user) {
+              await saveToProfiles(data.user.id, email, fullName, role);
+            }
+            showCustomModal({
+              title: "Success",
+              message: "Staff member " + fullName + " registered successfully!",
+              type: "success",
+              onConfirm: () => {
+                clearStaffForm();
+                document.getElementById("addStaffForm").style.display = "none";
+                displayStaffList();
+              },
+            });
+          }
+        } finally {
+          submitBtn.disabled = false;
+        }
+      }
+
+      async function displayStaffList() {
+        showLoader("Loading employees...");
+        const tableBody = document.getElementById("staffTableBody");
+        if (!tableBody) {
+          hideLoader();
+          return;
+        }
+        tableBody.innerHTML = "";
+
+        // 1. Fetch from your new 'profiles' table
+        const { data: staff, error } = await client
+          .from("profiles")
+          .select("*")
+          .order("full_name", { ascending: true });
+
+        const { data: sales } = await client
+          .from("sales")
+          .select("cashier_id, total_amount");
+
+        if (error) {
+          console.error("Error loading staff:", error.message);
+          tableBody.innerHTML = `<tr><td colspan="4" style="color:red; text-align: center; padding: 20px;">Error: ${error.message}</td></tr>`;
+          hideLoader();
+          return;
+        }
+
+        if (!staff || staff.length === 0) {
+          tableBody.innerHTML =
+            '<tr><td colspan="4" style="text-align: center; color: #888; padding: 40px 0;">No staff members found.</td></tr>';
+          hideLoader();
+          return;
+        }
+
+        // 3. Loop through the profiles and inject them into the HTML
+        let rowsHTML = "";
+        staff.forEach((member) => {
+          const role = member.role || "unknown";
+          const displayName =
+            member.full_name || member.display_name || member.name || "—";
+            
+          const memberSales = (sales || []).filter(s => s.cashier_id === member.id);
+          const totalRevenue = memberSales.reduce((sum, s) => sum + Number(s.total_amount || 0), 0);
+          const salesCount = memberSales.length;
+
+          const row = `
+                <tr>
+                    <td>
+                      <div style="font-weight: 600; color: #2b2b2f;">${escapeHtml(displayName)}</div>
+                      <div style="font-size: 12px; color: #888;">${salesCount} sales transactions</div>
+                    </td>
+                    <td>${escapeHtml(member.email || "—")}</td>
+                    <td><span class="role-badge ${escapeHtml(role)}">${escapeHtml(role.toUpperCase())}</span></td>
+                    <td style="font-weight: 700; color: #2f2ee9;">GH₵${totalRevenue.toFixed(2)}</td>
+                </tr>
+            `;
+          rowsHTML += row;
+        });
+        tableBody.innerHTML = rowsHTML;
+        hideLoader();
+      }
+
+      // Run this automatically when the page loads
+      document.addEventListener("DOMContentLoaded", displayStaffList);
+      document.addEventListener("DOMContentLoaded", loadDashboardStats);
+
+      async function loadDashboardStats() {
+        showLoader("Loading dashboard...");
+        // Get today's bounds
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+        const isoStart = startOfToday.toISOString();
+
+        // Fetch today's sales
+        const { data: todaySales, error: salesError } = await client
+          .from("sales")
+          .select("id, total_amount, cashier_id, created_at")
+          .gte("created_at", isoStart)
+          .order("created_at", { ascending: false });
+
+        // Fetch total employees
+        const { count: empCount, error: empError } = await client
+          .from("profiles")
+          .select("*", { count: "exact", head: true });
+
+        const { data: profilesData, error: profileErr } = await client
+          .from("profiles")
+          .select("id, full_name, email");
+          
+        if (profileErr) console.error("Supabase blocked profile access:", profileErr.message);
+        
+        const profileMap = Object.fromEntries(
+          (profilesData || []).map((p) => [
+            p.id,
+            p.full_name || p.email || "Unknown",
+          ]),
+        );
+
+        const sales = todaySales || [];
+        const totalSalesAmount = sales.reduce(
+          (sum, s) => sum + Number(s.total_amount || 0),
+          0,
+        );
+        const totalTransactions = sales.length;
+        const avgTrans =
+          totalTransactions > 0 ? totalSalesAmount / totalTransactions : 0;
+
+        // Update Cards
+        document.getElementById("statTodaySales").textContent =
+          `GH₵${totalSalesAmount.toFixed(2)}`;
+        document.getElementById("statTotalTrans").textContent =
+          totalTransactions;
+        document.getElementById("statActiveEmp").textContent = empCount || 0;
+        document.getElementById("statAvgTrans").textContent =
+          `GH₵${avgTrans.toFixed(2)}`;
+
+        // Top Performers
+        const cashierStats = {};
+        sales.forEach((sale) => {
+          const cId = sale.cashier_id;
+          if (!cashierStats[cId]) {
+            cashierStats[cId] = {
+              name: profileMap[cId] || (cId ? `Employee (${cId.substring(0, 5)})` : "Unknown Cashier"),
+              total: 0,
+              count: 0,
+            };
+          }
+          cashierStats[cId].total += Number(sale.total_amount || 0);
+          cashierStats[cId].count += 1;
+        });
+
+        const topPerformers = Object.values(cashierStats)
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 5);
+        const topPerfContainer = document.getElementById("topPerformersDash");
+        if (topPerformers.length > 0) {
+          topPerfContainer.innerHTML = topPerformers
+            .map(
+              (p) => `
+              <div class="employee-item">
+                <div class="employee-info">
+                  <div class="employee-name">${escapeHtml(p.name || "Unknown")}</div>
+                  <div class="employee-role">Cashier</div>
+                </div>
+                <div class="employee-sales">
+                  <div class="employee-sales-value">GH₵${p.total.toFixed(2)}</div>
+                  <div class="employee-sales-count">${p.count} sales today</div>
+                </div>
+              </div>
+            `,
+            )
+            .join("");
+        } else {
+          topPerfContainer.innerHTML = `<p style="color:#888; font-size:13px;">No sales today.</p>`;
+        }
+
+        // Recent Transactions
+        const recentSales = sales.slice(0, 5);
+        const recentContainer = document.getElementById(
+          "recentTransactionsDash",
+        );
+        if (recentSales.length > 0) {
+          recentContainer.innerHTML = recentSales
+            .map((sale) => {
+              let cName = profileMap[sale.cashier_id] || "Unknown Cashier";
+              const time = new Date(sale.created_at).toLocaleTimeString(
+                "en-US",
+                { hour: "2-digit", minute: "2-digit" },
+              );
+              return `<div class="transaction-item"><div class="transaction-info"><div class="transaction-user">${escapeHtml(cName || "Unknown")}</div><div class="transaction-time">${time}</div></div><div style="text-align: right"><div class="transaction-amount">GH₵${Number(sale.total_amount).toFixed(2)}</div><span class="transaction-status completed">Completed</span></div></div>`;
+            })
+            .join("");
+        } else {
+          recentContainer.innerHTML = `<p style="color:#888; font-size:13px;">No transactions yet.</p>`;
+        }
+        hideLoader();
+      }
+
+      async function loadTransactions() {
+        showLoader("Loading transactions...");
+        const container = document.getElementById("transactionsContainer");
+        if (!container) {
+          hideLoader();
+          return;
+        }
+        container.innerHTML = "";
+
+        const { data: sales, error } = await client
+          .from("sales")
+          .select(
+            `
+            id,
+            total_amount,
+            created_at,
+            items,
+            cashier_id
+          `,
+          )
+          .order("created_at", { ascending: false });
+        const { data: profilesData } = await client
+          .from("profiles")
+          .select("id, full_name, email");
+        const profileMap = Object.fromEntries(
+          (profilesData || []).map((p) => [
+            p.id,
+            p.full_name || p.email || "Unknown",
+          ]),
+        );
+
+        if (error) {
+          console.error("Error loading transactions:", error.message);
+          container.innerHTML = `<p style="color:red; text-align: center; padding: 20px;">Error: ${error.message}</p>`;
+          hideLoader();
+          return;
+        }
+
+        if (!sales || sales.length === 0) {
+          container.innerHTML = `<p style="color: #888; font-size: 14px; text-align: center; padding: 40px 0;">No transactions found.</p>`;
+          hideLoader();
+          return;
+        }
+
+        let html = `
+          <table class="inventory-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Cashier</th>
+                <th>Items Sold</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        sales.forEach((sale) => {
+          const dateObj = new Date(sale.created_at);
+          const date = dateObj.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+          const time = dateObj.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+
+          let cashierName = profileMap[sale.cashier_id];
+          if (!cashierName) cashierName = sale.cashier_id ? `Employee (${sale.cashier_id.substring(0, 5)})` : "Unknown";
+
+          const amount = parseFloat(sale.total_amount || 0).toFixed(2);
+
+          let itemsHtml = "-";
+          if (sale.items && Array.isArray(sale.items)) {
+            itemsHtml = sale.items
+              .map(
+                (i) =>
+                  `<div style="font-size: 12px; color: #555; white-space: nowrap;">${i.quantity}x ${escapeHtml(i.name)}</div>`,
+              )
+              .join("");
+          }
+
+          html += `
+            <tr>
+              <td>
+                <div style="font-weight: 600; color: #2b2b2f;">${date}</div>
+                <div style="font-size: 12px; color: #888;">${time}</div>
+              </td>
+              <td>${escapeHtml(cashierName)}</td>
+              <td>${itemsHtml}</td>
+              <td style="font-weight: bold; color: #2f2ee9;">GH₵${amount}</td>
+              <td><span class="transaction-status completed">Completed</span></td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+        hideLoader();
+      }
+
+      // Reports functionality
+      async function loadReports() {
+        showLoader("Generating reports...");
+        const { data: sales, error } = await client
+          .from("sales")
+          .select("*")
+          .order("created_at", { ascending: true });
+
+        if (error) {
+          console.error("Error loading reports", error);
+          hideLoader();
+          return;
+        }
+
+        // Process data for Revenue (Line Chart)
+        const revenueByDate = {};
+        // Process data for Items (Bar Chart)
+        const itemsSold = {};
+
+        sales.forEach((sale) => {
+          const date = new Date(sale.created_at).toLocaleDateString();
+          revenueByDate[date] =
+            (revenueByDate[date] || 0) + Number(sale.total_amount);
+
+          if (sale.items && Array.isArray(sale.items)) {
+            sale.items.forEach((item) => {
+              itemsSold[item.name] =
+                (itemsSold[item.name] || 0) + item.quantity;
+            });
+          }
+        });
+
+        // Chart Theming based on Dark Mode
+        const isDark = document.body.classList.contains("dark-mode");
+        Chart.defaults.color = isDark ? "#e0e0e0" : "#666";
+        const gridColor = isDark ? "#333" : "#e0e0e0";
+
+        // Render Revenue Chart
+        const revCtx = document.getElementById("revenueChart").getContext("2d");
+        if (revenueChartInstance) revenueChartInstance.destroy();
+        revenueChartInstance = new Chart(revCtx, {
+          type: "line",
+          data: {
+            labels: Object.keys(revenueByDate),
+            datasets: [
+              {
+                label: "Daily Revenue (GH₵)",
+                data: Object.values(revenueByDate),
+                borderColor: "#2f2ee9",
+                tension: 0.3,
+                fill: true,
+                backgroundColor: "rgba(47, 46, 233, 0.1)",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { color: gridColor } },
+              y: { grid: { color: gridColor }, beginAtZero: true },
+            },
+          },
+        });
+
+        // Render Items Chart
+        const sortedItems = Object.entries(itemsSold)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10);
+
+        const itemsCtx = document.getElementById("itemsChart").getContext("2d");
+        if (itemsChartInstance) itemsChartInstance.destroy();
+        itemsChartInstance = new Chart(itemsCtx, {
+          type: "bar",
+          data: {
+            labels: sortedItems.map((i) => i[0]),
+            datasets: [
+              {
+                label: "Quantity Sold",
+                data: sortedItems.map((i) => i[1]),
+                backgroundColor: "#06b6d4",
+                borderRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: { grid: { display: false } },
+              y: { grid: { color: gridColor }, beginAtZero: true },
+            },
+          },
+        });
+        hideLoader();
+      }
+
+      document.getElementById("addStaffBtn").addEventListener("click", () => {
+        const wrap = document.getElementById("addStaffForm");
+        const willOpen = wrap.style.display !== "block";
+        wrap.style.display = willOpen ? "block" : "none";
+        if (willOpen) document.getElementById("staffName").focus();
+      });
+
+      document
+        .getElementById("cancelStaffBtn")
+        .addEventListener("click", () => {
+          document.getElementById("addStaffForm").style.display = "none";
+          clearStaffForm();
+        });
+
+      // Generic Custom Modal Function
+      function showCustomModal({
+        title,
+        message,
+        type = "info",
+        confirmText = "OK",
+        cancelText = "Cancel",
+        onConfirm = null,
+      }) {
+        const modal = document.getElementById("customModal");
+        document.getElementById("customModalTitle").textContent = title;
+        document.getElementById("customModalMessage").textContent = message;
+
+        let icon = "ℹ️",
+          confirmClass = "primary";
+        if (type === "success") {
+          icon = "✅";
+          confirmClass = "success";
+        } else if (type === "error") {
+          icon = "❌";
+          confirmClass = "danger";
+        } else if (type === "warning" || type === "confirm") {
+          icon = "⚠️";
+          confirmClass = "primary";
+        }
+
+        document.getElementById("customModalIcon").textContent = icon;
+        const actionsEl = document.getElementById("customModalActions");
+        actionsEl.innerHTML = "";
+
+        if (type === "confirm") {
+          const cancelBtn = document.createElement("button");
+          cancelBtn.className = "custom-modal-btn secondary";
+          cancelBtn.textContent = cancelText;
+          cancelBtn.onclick = () => modal.classList.remove("show");
+          actionsEl.appendChild(cancelBtn);
+        }
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.className = `custom-modal-btn ${confirmClass}`;
+        confirmBtn.textContent = confirmText;
+        confirmBtn.onclick = () => {
+          modal.classList.remove("show");
+          if (onConfirm) onConfirm();
+        };
+        actionsEl.appendChild(confirmBtn);
+
+        modal.classList.add("show");
+      }
+
+      // Dark Mode Functionality
+      const darkModeToggle = document.getElementById("darkModeToggle");
+
+      function toggleDarkMode(isDark) {
+        if (isDark) {
+          document.body.classList.add("dark-mode");
+        } else {
+          document.body.classList.remove("dark-mode");
+        }
+        localStorage.setItem("adminDarkMode", isDark ? "true" : "false");
+        // Re-render reports if that tab is active to update chart colors
+        if (document.getElementById("reports-tab").style.display === "block")
+          loadReports();
+      }
+
+      darkModeToggle.addEventListener("change", (e) =>
+        toggleDarkMode(e.target.checked),
+      );
+
+      // Init theme on load
+      const savedDarkMode = localStorage.getItem("adminDarkMode") === "true";
+      darkModeToggle.checked = savedDarkMode;
+      toggleDarkMode(savedDarkMode);
     </script>
   </body>
 </html>

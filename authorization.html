@@ -185,9 +185,116 @@
           font-size: 14px;
         }
       }
+
+      /* Custom Modal Styles */
+      .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      .custom-modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .custom-modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 30px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        transform: scale(0.9);
+        transition: transform 0.3s ease;
+      }
+      .custom-modal-overlay.show .custom-modal-content {
+        transform: scale(1);
+      }
+      .custom-modal-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+      }
+      .custom-modal-content h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+        font-size: 20px;
+      }
+      .custom-modal-content p {
+        margin: 0 0 25px 0;
+        color: #666;
+        font-size: 15px;
+        line-height: 1.5;
+      }
+      .custom-modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+      }
+      .custom-modal-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .custom-modal-btn.primary {
+        background: #2f2ee9;
+        color: white;
+      }
+      .custom-modal-btn.primary:hover {
+        background: #1a1ac0;
+      }
+      .custom-modal-btn.secondary {
+        background: #e8e8e8;
+        color: #333;
+      }
+      .custom-modal-btn.secondary:hover {
+        background: #d8d8d8;
+      }
+      .custom-modal-btn.danger {
+        background: #dc3545;
+        color: white;
+      }
+      .custom-modal-btn.danger:hover {
+        background: #c82333;
+      }
+      .custom-modal-btn.success {
+        background: #28a745;
+        color: white;
+      }
+      .custom-modal-btn.success:hover {
+        background: #218838;
+      }
     </style>
+    <script>
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "index.html";
+      }
+    </script>
   </head>
   <body>
+    <!-- Custom Modal -->
+    <div id="customModal" class="custom-modal-overlay">
+      <div class="custom-modal-content">
+        <div id="customModalIcon" class="custom-modal-icon"></div>
+        <h3 id="customModalTitle">Title</h3>
+        <p id="customModalMessage">Message</p>
+        <div class="custom-modal-actions" id="customModalActions"></div>
+      </div>
+    </div>
+
     <div class="auth-container">
       <div id="authContent">
         <div class="auth-icon">🔐</div>
@@ -239,7 +346,15 @@
       </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+      const supabaseUrl = "https://czrfdcarnyesbfgnlums.supabase.co";
+      const supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6cmZkY2Fybnllc2JmZ25sdW1zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDY2ODAsImV4cCI6MjA4ODkyMjY4MH0.trHM_a4BJk3kpid_oi7Exz8T3U7I13mXtRwnLaG3nkY";
+
+      // Initialize Supabase
+      const client = window.supabase.createClient(supabaseUrl, supabaseKey);
+
       function initAuthorization() {
         const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
         const paymentDetails = JSON.parse(
@@ -249,7 +364,7 @@
         // Display payment information
         const total = checkoutData?.total || 0;
         document.getElementById("paymentAmount").textContent =
-          "$" + total.toFixed(2);
+          "GH₵" + total.toFixed(2);
 
         // Generate reference number
         const refNumber = "REF" + Date.now().toString().slice(-10);
@@ -269,7 +384,7 @@
         }
       }
 
-      function authorizePayment() {
+      async function authorizePayment() {
         const authContent = document.getElementById("authContent");
         const loadingContent = document.getElementById("loadingContent");
 
@@ -277,46 +392,179 @@
         authContent.style.display = "none";
         loadingContent.style.display = "block";
 
-        // Simulate payment processing (2 seconds)
-        setTimeout(() => {
-          // Create receipt data
+        try {
+          // 1. Get the currently logged-in user's info
+          const {
+            data: { user },
+            error: userError,
+          } = await client.auth.getUser();
+
+          if (userError || !user) {
+            showCustomModal({
+              title: "Session Error",
+              message: "Error: No active cashier session found!",
+              type: "error",
+              onConfirm: () => (window.location.href = "index.html"),
+            });
+            authContent.style.display = "block";
+            loadingContent.style.display = "none";
+            return;
+          }
+
           const checkoutData = JSON.parse(localStorage.getItem("checkoutData"));
           const paymentDetails = JSON.parse(
             localStorage.getItem("paymentDetails"),
           );
 
-          const receiptData = {
-            ...checkoutData,
-            paymentMethod: paymentDetails.method,
-            paymentDetails: paymentDetails,
-            orderNumber: ("ORD" + Date.now()).slice(-10),
-            timestamp: new Date().toLocaleString("en-US", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-              hour12: true,
-            }),
-            transactionId: "TXN" + Date.now(),
+          const saleData = {
+            total_amount: checkoutData.total,
+            items: checkoutData.items,
+            cashier_id: user.id,
           };
 
-          localStorage.setItem("receiptData", JSON.stringify(receiptData));
-          localStorage.removeItem("checkoutData");
-          localStorage.removeItem("paymentDetails");
-          localStorage.removeItem("paymentMethod");
+          // 2. Insert into Supabase sales table
+          const { error } = await client.from("sales").insert([saleData]);
 
-          // Redirect to receipt
-          window.location.href = "receipt.html";
-        }, 2000);
+          if (error) {
+            console.error("Sale failed:", error.message);
+            showCustomModal({
+              title: "Transaction Failed",
+              message: "Error processing sale: " + error.message,
+              type: "error",
+            });
+            authContent.style.display = "block";
+            loadingContent.style.display = "none";
+          } else {
+            // --- Deduct Stock from Products ---
+            for (const item of checkoutData.items) {
+              // 1. Get current stock first
+              const { data: product, error: fetchError } = await client
+                .from("Products")
+                .select("stock_quantity")
+                .eq("id", item.id)
+                .single();
+
+              if (!fetchError && product) {
+                // 2. Subtract the quantity sold
+                const newStock = product.stock_quantity - item.quantity;
+
+                // 3. Update the database
+                const { error: updateError } = await client
+                  .from("Products")
+                  .update({ stock_quantity: newStock })
+                  .eq("id", item.id);
+
+                if (updateError) {
+                  console.error(
+                    "Stock update failed for",
+                    item.name,
+                    updateError.message,
+                  );
+                } else {
+                  console.log(
+                    `Successfully updated stock for ${item.name}. New balance: ${newStock}`,
+                  );
+                }
+              }
+            }
+
+            // Create receipt data
+            const receiptData = {
+              ...checkoutData,
+              paymentMethod: paymentDetails.method,
+              paymentDetails: paymentDetails,
+              orderNumber: ("ORD" + Date.now()).slice(-10),
+              timestamp: new Date().toLocaleString("en-US", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: true,
+              }),
+              transactionId: "TXN" + Date.now(),
+            };
+
+            localStorage.setItem("receiptData", JSON.stringify(receiptData));
+            localStorage.removeItem("checkoutData");
+            localStorage.removeItem("paymentDetails");
+            localStorage.removeItem("paymentMethod");
+
+            // Redirect to receipt
+            window.location.href = "receipt.html";
+          }
+        } catch (err) {
+          console.error("System error:", err);
+          showCustomModal({
+            title: "System Error",
+            message: "An unexpected error occurred. Please try again.",
+            type: "error",
+          });
+          authContent.style.display = "block";
+          loadingContent.style.display = "none";
+        }
       }
 
       function cancelPayment() {
-        if (confirm("Are you sure? The payment will be cancelled.")) {
-          localStorage.removeItem("paymentDetails");
-          window.location.href = "checkout.html";
+        showCustomModal({
+          title: "Cancel Payment",
+          message: "Are you sure? The payment will be cancelled.",
+          type: "confirm",
+          onConfirm: () => {
+            localStorage.removeItem("paymentDetails");
+            window.location.href = "checkout.html";
+          },
+        });
+      }
+
+      function showCustomModal({
+        title,
+        message,
+        type = "info",
+        confirmText = "OK",
+        cancelText = "Cancel",
+        onConfirm = null,
+      }) {
+        const modal = document.getElementById("customModal");
+        document.getElementById("customModalTitle").textContent = title;
+        document.getElementById("customModalMessage").textContent = message;
+
+        let icon = "ℹ️",
+          confirmClass = "primary";
+        if (type === "success") {
+          icon = "✅";
+          confirmClass = "success";
+        } else if (type === "error") {
+          icon = "❌";
+          confirmClass = "danger";
+        } else if (type === "warning" || type === "confirm") {
+          icon = "⚠️";
+          confirmClass = "primary";
         }
+
+        document.getElementById("customModalIcon").textContent = icon;
+        const actionsEl = document.getElementById("customModalActions");
+        actionsEl.innerHTML = "";
+
+        if (type === "confirm") {
+          const cancelBtn = document.createElement("button");
+          cancelBtn.className = "custom-modal-btn secondary";
+          cancelBtn.textContent = cancelText;
+          cancelBtn.onclick = () => modal.classList.remove("show");
+          actionsEl.appendChild(cancelBtn);
+        }
+
+        const confirmBtn = document.createElement("button");
+        confirmBtn.className = `custom-modal-btn ${confirmClass}`;
+        confirmBtn.textContent = confirmText;
+        confirmBtn.onclick = () => {
+          modal.classList.remove("show");
+          if (onConfirm) onConfirm();
+        };
+        actionsEl.appendChild(confirmBtn);
+
+        modal.classList.add("show");
       }
 
       // Initialize on page load
